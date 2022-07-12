@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:columnCount="6"
+    android:rowCount="12">
+
+    <Spinner
+        android:id="@+id/cmbBondedDevices"
+        android:layout_columnSpan="4"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/swtConnect"
+        android:layout_columnSpan="2"
+        android:layout_gravity="end"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="10dp"
+        android:text="Connect" />
+
+    <LinearLayout
+        android:layout_gravity="fill"
+        android:layout_height="120dp"
+        android:layout_columnWeight="1"
+        android:layout_columnSpan="2"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-5dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnPower"
+            android:layout_height="62dp"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="-5dp"
+            android:text="⛔"
+            android:textSize="25sp"/>
+
+        <Button
+            android:id="@+id/btnSource"
+            android:layout_height="63dp"
+            android:layout_width="match_parent"
+            android:enabled="true"
+            android:text="Advertise"
+            android:visibility="invisible"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnUp"
+        android:layout_height="120dp"
+        android:layout_columnSpan="2"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-6dp"
+        android:text="▲"
+        android:textSize="60sp" />
+
+    <LinearLayout
+        android:layout_gravity="fill"
+        android:layout_height="120dp"
+        android:layout_columnWeight="1"
+        android:layout_columnSpan="2"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-5dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnMenu"
+            android:layout_height="62dp"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="-5dp"
+            android:text="☰"
+            android:textSize="32sp"/>
+
+        <Button
+            android:id="@+id/btnMute"
+            android:layout_height="63dp"
+            android:layout_width="match_parent"
+            android:text="🔇"
+            android:textSize="32sp"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnLeft"
+        android:layout_columnSpan="2"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-6dp"
+        android:text="◀"
+        android:textSize="60sp" />
+
+    <Button
+        android:id="@+id/btnMiddle"
+        android:layout_height="120dp"
+        android:layout_columnSpan="2"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-6dp"
+        android:text="●"
+        android:textSize="60sp" />
+
+    <Button
+        android:id="@+id/btnRight"
+        android:layout_height="120dp"
+        android:layout_row="0"
+        android:layout_columnSpan="2"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-6dp"
+        android:text="▶"
+        android:textSize="60sp" />
+
+    <Button
+        android:id="@+id/btnHome"
+        android:layout_height="120dp"
+        android:layout_columnSpan="2"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-6dp"
+        android:text="🏠"
+        android:textSize="60sp" />
+
+    <Button
+        android:id="@+id/btnDown"
+        android:layout_height="120dp"
+        android:layout_columnSpan="2"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-6dp"
+        android:text="▼"
+        android:textSize="60sp" />
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_height="120dp"
+        android:layout_columnSpan="2"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-6dp"
+        android:text="🔙"
+        android:textSize="60sp" />
+
+    <Button
+        android:id="@+id/btnVolDec"
+        android:layout_height="120dp"
+        android:layout_columnSpan="2"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-6dp"
+        android:text="🔉"
+        android:textSize="60sp" />
+
+    <Button
+        android:id="@+id/btnPlayPause"
+        android:layout_height="120dp"
+        android:layout_columnSpan="2"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-6dp"
+        android:text="⏯"
+        android:textSize="60sp" />
+
+    <Button
+        android:id="@+id/btnVolInc"
+        android:layout_height="120dp"
+        android:layout_columnSpan="2"
+        android:layout_columnWeight="1"
+        android:layout_gravity="fill"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="-6dp"
+        android:text="🔊"
+        android:textSize="60sp" />
+
+
+    <EditText
+        android:id="@+id/txtInput"
+        android:layout_columnSpan="6"
+        android:layout_gravity="fill"
+        android:layout_marginTop="10dp"
+        android:hint="Enter text here to be sent"
+        android:inputType="textPersonName"
+        android:autofillHints="" />
+
+    <TextView
+        android:id="@+id/txtOut"
+        android:layout_width="match_parent"
+        android:layout_rowSpan="3"
+        android:layout_columnSpan="6"
+        android:layout_gravity="fill"
+        android:layout_margin="2dp" />
+
+</GridLayout>

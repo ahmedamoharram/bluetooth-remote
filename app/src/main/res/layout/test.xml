@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:rowCount="5"
+    android:columnCount="6"
+    android:layout_height="wrap_content">
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_columnSpan="4" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_columnSpan="2"
+        android:layout_gravity="fill"
+        android:layout_margin="5dp"
+        android:layout_columnWeight="1"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_columnSpan="2"
+        android:layout_height="120dp"
+        android:layout_gravity="fill"
+        android:layout_margin="5dp"
+        android:layout_columnWeight="1"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_columnSpan="2"
+        android:layout_gravity="fill"
+        android:layout_margin="5dp"
+        android:layout_columnWeight="1"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_columnSpan="2"
+        android:layout_gravity="fill"
+        android:layout_margin="5dp"
+        android:layout_columnWeight="1"
+        android:text="Button" />
+
+</GridLayout>

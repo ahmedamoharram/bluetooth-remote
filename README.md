@@ -10,3 +10,5 @@ I also released the code to the community for more optimization from anyone.
 This app is using the Android HID API to simulate a Bluetooth peripheral.
 
 It is still not working on Windows for some reason, but works on all android devices.
+
+Keyboard input is also supported, just type anything in the textbox and hit enter to submit it.

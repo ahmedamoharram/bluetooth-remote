@@ -9,5 +9,16 @@
     <string name="btn_right">▶</string>
     <string name="btn_up">▲</string>
     <string name="btn_down">▼</string>
+    <string name="btn_middle">●</string>
+
+    <string name="btn_back">🔙</string>
+    <string name="btn_home">🏠</string>
+    <string name="btn_power">⛔</string>
+    <string name="btn_mute">🔇</string>
+    <string name="btn_menu">☰</string>
+    <string name="btn_vol_up">🔊</string>
+    <string name="btn_vol_down">🔉</string>
+    <string name="btn_play_pause">⏯</string>
+
 
 </resources>

@@ -34,7 +34,7 @@
             android:layout_height="62dp"
             android:layout_width="match_parent"
             android:layout_marginBottom="-5dp"
-            android:text="⛔"
+            android:text="@string/btn_power"
             android:textSize="25sp"/>
 
         <Button
@@ -56,7 +56,7 @@
         android:layout_gravity="fill"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="-6dp"
-        android:text="▲"
+        android:text="@string/btn_up"
         android:textSize="60sp" />
 
     <LinearLayout
@@ -74,14 +74,14 @@
             android:layout_height="62dp"
             android:layout_width="match_parent"
             android:layout_marginBottom="-5dp"
-            android:text="☰"
+            android:text="@string/btn_menu"
             android:textSize="32sp"/>
 
         <Button
             android:id="@+id/btnMute"
             android:layout_height="63dp"
             android:layout_width="match_parent"
-            android:text="🔇"
+            android:text="@string/btn_mute"
             android:textSize="32sp"/>
 
     </LinearLayout>
@@ -94,7 +94,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="-6dp"
-        android:text="◀"
+        android:text="@string/btn_left"
         android:textSize="60sp" />
 
     <Button
@@ -105,7 +105,7 @@
         android:layout_gravity="fill"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="-6dp"
-        android:text="●"
+        android:text="@string/btn_middle"
         android:textSize="60sp" />
 
     <Button
@@ -117,7 +117,7 @@
         android:layout_gravity="fill"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="-6dp"
-        android:text="▶"
+        android:text="@string/btn_right"
         android:textSize="60sp" />
 
     <Button
@@ -129,7 +129,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="-6dp"
-        android:text="🏠"
+        android:text="@string/btn_home"
         android:textSize="60sp" />
 
     <Button
@@ -140,7 +140,7 @@
         android:layout_gravity="fill"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="-6dp"
-        android:text="▼"
+        android:text="@string/btn_down"
         android:textSize="60sp" />
 
     <Button
@@ -151,7 +151,7 @@
         android:layout_gravity="fill"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="-6dp"
-        android:text="🔙"
+        android:text="@string/btn_back"
         android:textSize="60sp" />
 
     <Button
@@ -163,7 +163,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="-6dp"
-        android:text="🔉"
+        android:text="@string/btn_vol_down"
         android:textSize="60sp" />
 
     <Button
@@ -174,7 +174,7 @@
         android:layout_gravity="fill"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="-6dp"
-        android:text="⏯"
+        android:text="@string/btn_play_pause"
         android:textSize="60sp" />
 
     <Button
@@ -185,7 +185,7 @@
         android:layout_gravity="fill"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="-6dp"
-        android:text="🔊"
+        android:text="@string/btn_vol_up"
         android:textSize="60sp" />
 
 

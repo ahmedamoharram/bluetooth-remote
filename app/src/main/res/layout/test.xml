@@ -3,6 +3,8 @@
     android:layout_width="fill_parent"
     android:rowCount="5"
     android:columnCount="6"
+    android:layout_marginHorizontal="5dp"
+    android:layout_marginVertical="5dp"
     android:layout_height="wrap_content">
 
     <Spinner
@@ -13,7 +15,6 @@
         android:id="@+id/button"
         android:layout_columnSpan="2"
         android:layout_gravity="fill"
-        android:layout_margin="5dp"
         android:layout_columnWeight="1"
         android:text="Button" />
 
@@ -22,7 +23,6 @@
         android:layout_columnSpan="2"
         android:layout_height="120dp"
         android:layout_gravity="fill"
-        android:layout_margin="5dp"
         android:layout_columnWeight="1"
         android:text="Button" />
 
@@ -30,7 +30,6 @@
         android:id="@+id/button5"
         android:layout_columnSpan="2"
         android:layout_gravity="fill"
-        android:layout_margin="5dp"
         android:layout_columnWeight="1"
         android:text="Button" />
 
@@ -38,8 +37,30 @@
         android:id="@+id/button6"
         android:layout_columnSpan="2"
         android:layout_gravity="fill"
-        android:layout_margin="5dp"
         android:layout_columnWeight="1"
         android:text="Button" />
+
+    <Button
+        android:id="@+id/button7"
+        android:layout_height="120dp"
+        android:layout_columnSpan="2"
+        android:layout_gravity="fill"
+        android:layout_columnWeight="1"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/button8"
+        android:layout_columnSpan="2"
+        android:layout_gravity="fill"
+        android:layout_columnWeight="1"
+        android:text="Button" />
+
+    <Button
+        android:id="@+id/button9"
+        android:layout_columnSpan="2"
+        android:layout_gravity="fill"
+        android:layout_columnWeight="1"
+        android:text="Button" />
+
 
 </GridLayout>

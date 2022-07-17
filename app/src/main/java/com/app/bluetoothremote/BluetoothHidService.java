@@ -25,9 +25,9 @@ public class BluetoothHidService extends Service implements BluetoothProfile.Ser
     private static final String TAG = "BluetoothHIDService";
 
     public @interface WHAT {
-        int BLUETOOTH_DISCONNECTED = 3;
-        int BLUETOOTH_CONNECTED = 2;
         int BLUETOOTH_CONNECTING = 1;
+        int BLUETOOTH_CONNECTED = 2;
+        int BLUETOOTH_DISCONNECTED = 3;
     }
 
     static BluetoothHidDevice bluetoothHidDevice;
@@ -36,10 +36,6 @@ public class BluetoothHidService extends Service implements BluetoothProfile.Ser
     static boolean isHidDeviceConnected = false;
 
     private BluetoothAdapter bluetoothAdapter;
-
-    private BluetoothHidDevice.Callback callback;
-
-    private Messenger messenger;
 
     private void debug(String msg) {
         Log.e(TAG, "------------------------- " + msg);
@@ -134,7 +130,7 @@ public class BluetoothHidService extends Service implements BluetoothProfile.Ser
             bluetoothHidDevice = (BluetoothHidDevice) proxy;
             debug("onServiceConnected profile == BluetoothProfile.HID_DEVICE");
 
-            callback = new BluetoothHidDevice.Callback() {
+            BluetoothHidDevice.Callback callback = new BluetoothHidDevice.Callback() {
                 @Override
                 public void onAppStatusChanged(BluetoothDevice pluggedDevice, boolean registered) {
                     super.onAppStatusChanged(pluggedDevice, registered);
@@ -164,12 +160,12 @@ public class BluetoothHidService extends Service implements BluetoothProfile.Ser
                     switch (state) {
                         case BluetoothHidDevice.STATE_CONNECTED:
                             stateStr = "STATE_CONNECTED";
-                            isHidDeviceConnected=true;
+                            isHidDeviceConnected = true;
                             sendMessage(WHAT.BLUETOOTH_CONNECTED);
                             break;
                         case BluetoothHidDevice.STATE_DISCONNECTED:
                             stateStr = "STATE_DISCONNECTED";
-                            isHidDeviceConnected=false;
+                            isHidDeviceConnected = false;
                             sendMessage(WHAT.BLUETOOTH_DISCONNECTED);
                             BluetoothHidService.this.stopSelf();
                             break;

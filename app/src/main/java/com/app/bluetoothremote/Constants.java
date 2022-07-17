@@ -72,7 +72,7 @@ public class Constants {
 
     private static final String SDP_NAME = "Bluetooth Remote Input";
     private static final String SDP_DESCRIPTION = "Bluetooth Remote HID Device";
-    private static final String SDP_PROVIDER = "Ahmed Moharram";
+    private static final String SDP_PROVIDER = "Bluetooth Remote";
     private static final int QOS_TOKEN_RATE = 800; // 9 bytes * 1000000 us / 11250 us
     private static final int QOS_TOKEN_BUCKET_SIZE = 9;
     private static final int QOS_PEAK_BANDWIDTH = 0;

@@ -547,6 +547,9 @@ public class MainActivity extends AppCompatActivity {
         Button btnMute = findViewById(R.id.btnMute);
         Button btnPlayPause = findViewById(R.id.btnPlayPause);
 
+        Button btnRewind = findViewById(R.id.btnRewind);
+        Button btnForward = findViewById(R.id.btnForward);
+
 
         buttons = new ArrayList<>();
         buttons.add(btnLeft);
@@ -562,6 +565,8 @@ public class MainActivity extends AppCompatActivity {
         buttons.add(btnPower);
         buttons.add(btnMenu);
         buttons.add(btnMute);
+        buttons.add(btnRewind);
+        buttons.add(btnForward);
 //        buttons.add(btnSource);
 
         setButtonsEnabled(BluetoothHidService.isRunning);
@@ -590,6 +595,8 @@ public class MainActivity extends AppCompatActivity {
         addRemoteKeyListeners(btnMute, RemoteControlHelper.Key.MUTE);
 
         addRemoteKeyListeners(btnPlayPause, RemoteControlHelper.Key.PLAY_PAUSE);
+        addRemoteKeyListeners(btnRewind, RemoteControlHelper.Key.MEDIA_REWIND);
+        addRemoteKeyListeners(btnForward, RemoteControlHelper.Key.MEDIA_FAST_FORWARD);
 
 
         txtInput.setOnKeyListener(this::handleInputText);

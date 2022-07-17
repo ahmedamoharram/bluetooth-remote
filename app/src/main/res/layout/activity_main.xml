@@ -1,209 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:columnCount="6"
-    android:rowCount="12">
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="2dp">
 
-    <Spinner
-        android:id="@+id/cmbBondedDevices"
-        android:layout_columnSpan="4"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill" />
+    <TableRow>
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/swtConnect"
-        android:layout_columnSpan="2"
-        android:layout_gravity="end"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="10dp"
-        android:text="Connect" />
+        <Spinner
+            android:layout_span="2"
+            android:id="@+id/cmbBondedDevices"
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
-    <LinearLayout
-        android:layout_gravity="fill"
-        android:layout_height="120dp"
-        android:layout_columnWeight="1"
-        android:layout_columnSpan="2"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-5dp"
-        android:orientation="vertical">
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/swtConnect"
+            android:layout_span="2"
+            android:layout_gravity="end"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Connect" />
 
-        <Button
-            android:id="@+id/btnPower"
-            android:layout_height="62dp"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="-5dp"
-            android:text="@string/btn_power"
-            android:textSize="25sp"/>
+    </TableRow>
 
-        <Button
-            android:id="@+id/btnSource"
-            android:layout_height="63dp"
-            android:layout_width="match_parent"
-            android:enabled="true"
-            android:text="Advertise"
-            android:visibility="invisible"
-            android:textSize="15sp"/>
+    <TableRow>
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/button_margin"
+            android:orientation="vertical"
+            android:layout_weight="1">
 
-    <Button
-        android:id="@+id/btnUp"
-        android:layout_height="120dp"
-        android:layout_columnSpan="2"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-6dp"
-        android:text="@string/btn_up"
-        android:textSize="60sp" />
+            <Button
+                android:id="@+id/btnPower"
+                android:text="@string/btn_power"
+                style="@style/half_button_style" />
 
-    <LinearLayout
-        android:layout_gravity="fill"
-        android:layout_height="120dp"
-        android:layout_columnWeight="1"
-        android:layout_columnSpan="2"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-5dp"
-        android:orientation="vertical">
+            <Button
+                android:id="@+id/btnSource"
+                android:text="Ad"
+                android:visibility="invisible"
+                style="@style/half_button_style" />
+
+        </LinearLayout>
 
         <Button
-            android:id="@+id/btnMenu"
-            android:layout_height="62dp"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="-5dp"
-            android:text="@string/btn_menu"
-            android:textSize="32sp"/>
+            android:id="@+id/btnUp"
+            android:text="@string/btn_up"
+            style="@style/full_button_style" />
+
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/button_margin"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnMenu"
+                android:text="@string/btn_menu"
+                style="@style/half_button_style" />
+
+            <Button
+                android:id="@+id/btnMute"
+                android:text="@string/btn_mute"
+                style="@style/half_button_style" />
+
+        </LinearLayout>
+
+    </TableRow>
+
+    <TableRow>
 
         <Button
-            android:id="@+id/btnMute"
-            android:layout_height="63dp"
+            android:id="@+id/btnLeft"
+            android:text="@string/btn_left"
+            style="@style/full_button_style" />
+
+        <Button
+            android:id="@+id/btnMiddle"
+            android:text="@string/btn_middle"
+            style="@style/full_button_style" />
+
+        <Button
+            android:id="@+id/btnRight"
+            android:text="@string/btn_right"
+            style="@style/full_button_style" />
+    </TableRow>
+
+    <TableRow>
+
+        <Button
+            android:id="@+id/btnHome"
+            android:text="@string/btn_home"
+            style="@style/full_button_style" />
+
+        <Button
+            android:id="@+id/btnDown"
+            android:text="@string/btn_down"
+            style="@style/full_button_style" />
+
+        <Button
+            android:id="@+id/btnBack"
+            android:text="@string/btn_back"
+            style="@style/full_button_style" />
+
+    </TableRow>
+
+    <TableRow>
+
+        <Button
+            android:id="@+id/btnRewind"
+            android:text="@string/btn_rewind"
+            style="@style/full_button_style" />
+
+        <Button
+            android:id="@+id/btnForward"
+            android:text="@string/btn_forward"
+            style="@style/full_button_style" />
+
+        <Button
+            android:id="@+id/btnPlayPause"
+            android:text="@string/btn_play_pause"
+            style="@style/full_button_style" />
+
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/button_margin"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnVolInc"
+                android:text="@string/btn_vol_up"
+                style="@style/half_button_style" />
+
+            <Button
+                android:id="@+id/btnVolDec"
+                android:text="@string/btn_vol_down"
+                style="@style/half_button_style" />
+
+        </LinearLayout>
+
+    </TableRow>
+
+    <TableRow>
+
+        <EditText
+            android:id="@+id/txtInput"
+            android:layout_span="2"
+            android:layout_weight="1"
+            android:hint="Type text here to send."
+            android:inputType="text" />
+
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:id="@+id/txtOut"
+            android:layout_span="4"
+            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:text="@string/btn_mute"
-            android:textSize="32sp"/>
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btnLeft"
-        android:layout_columnSpan="2"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-6dp"
-        android:text="@string/btn_left"
-        android:textSize="60sp" />
-
-    <Button
-        android:id="@+id/btnMiddle"
-        android:layout_height="120dp"
-        android:layout_columnSpan="2"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-6dp"
-        android:text="@string/btn_middle"
-        android:textSize="60sp" />
-
-    <Button
-        android:id="@+id/btnRight"
-        android:layout_height="120dp"
-        android:layout_row="0"
-        android:layout_columnSpan="2"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-6dp"
-        android:text="@string/btn_right"
-        android:textSize="60sp" />
-
-    <Button
-        android:id="@+id/btnHome"
-        android:layout_height="120dp"
-        android:layout_columnSpan="2"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-6dp"
-        android:text="@string/btn_home"
-        android:textSize="60sp" />
-
-    <Button
-        android:id="@+id/btnDown"
-        android:layout_height="120dp"
-        android:layout_columnSpan="2"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-6dp"
-        android:text="@string/btn_down"
-        android:textSize="60sp" />
-
-    <Button
-        android:id="@+id/btnBack"
-        android:layout_height="120dp"
-        android:layout_columnSpan="2"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-6dp"
-        android:text="@string/btn_back"
-        android:textSize="60sp" />
-
-    <Button
-        android:id="@+id/btnVolDec"
-        android:layout_height="120dp"
-        android:layout_columnSpan="2"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-6dp"
-        android:text="@string/btn_vol_down"
-        android:textSize="60sp" />
-
-    <Button
-        android:id="@+id/btnPlayPause"
-        android:layout_height="120dp"
-        android:layout_columnSpan="2"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-6dp"
-        android:text="@string/btn_play_pause"
-        android:textSize="60sp" />
-
-    <Button
-        android:id="@+id/btnVolInc"
-        android:layout_height="120dp"
-        android:layout_columnSpan="2"
-        android:layout_columnWeight="1"
-        android:layout_gravity="fill"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="-6dp"
-        android:text="@string/btn_vol_up"
-        android:textSize="60sp" />
+            android:layout_margin="2dp" />
+    </TableRow>
 
 
-    <EditText
-        android:id="@+id/txtInput"
-        android:layout_columnSpan="6"
-        android:layout_gravity="fill"
-        android:layout_marginTop="10dp"
-        android:hint="Enter text here to be sent"
-        android:inputType="textPersonName"
-        android:autofillHints="" />
 
-    <TextView
-        android:id="@+id/txtOut"
-        android:layout_width="match_parent"
-        android:layout_rowSpan="3"
-        android:layout_columnSpan="6"
-        android:layout_gravity="fill"
-        android:layout_margin="2dp" />
 
-</GridLayout>
+
+</TableLayout>

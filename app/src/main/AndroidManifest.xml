@@ -33,6 +33,8 @@
             android:exported="true"
             android:icon="@mipmap/remote_control_launcher"
             android:roundIcon="@mipmap/remote_control_launcher"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

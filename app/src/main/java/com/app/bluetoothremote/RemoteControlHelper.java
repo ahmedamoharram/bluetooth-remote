@@ -53,7 +53,6 @@ public class RemoteControlHelper {
         byte[] BACK = new byte[]{(byte) 0x02, (byte) 0x24};
         byte[] QUIT = new byte[]{(byte) 0x00, (byte) 0x94};
 
-
     }
 
     @SuppressLint("MissingPermission")

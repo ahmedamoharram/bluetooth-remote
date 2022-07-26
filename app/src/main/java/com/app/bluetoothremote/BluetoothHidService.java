@@ -18,11 +18,30 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 public class BluetoothHidService extends Service implements BluetoothProfile.ServiceListener {
     private static final String TAG = "BluetoothHIDService";
+
+    static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
+    static final String ACTION_VOL_INC = "ACTION_VOL_INC";
+    static final String ACTION_VOL_DEC = "ACTION_VOL_DEC";
+    static final String ACTION_MUTE = "ACTION_MUTE";
+    static final String ACTION_POWER = "ACTION_POWER";
+
+    static final String ACTION_REWIND = "ACTION_REWIND";
+    static final String ACTION_FORWARD = "ACTION_FORWARD";
+    static final String ACTION_UP = "ACTION_UP";
+    static final String ACTION_DOWN = "ACTION_DOWN";
+    static final String ACTION_LEFT = "ACTION_LEFT";
+    static final String ACTION_RIGHT = "ACTION_RIGHT";
+    static final String ACTION_MIDDLE = "ACTION_MIDDLE";
+    static final String ACTION_MENU = "ACTION_MENU";
+    static final String ACTION_HOME = "ACTION_HOME";
+    static final String ACTION_BACK = "ACTION_BACK";
 
     public @interface WHAT {
         int BLUETOOTH_CONNECTING = 1;
@@ -77,17 +96,98 @@ public class BluetoothHidService extends Service implements BluetoothProfile.Ser
         String CHANNEL_ID = "Bluetooth Remote Service";
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Bluetooth Remote Service", NotificationManager.IMPORTANCE_MIN);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
         Notification notification =
-                new Notification.Builder(this, CHANNEL_ID)
+                new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setContentTitle("Bluetooth Remote")
                         .setContentText("Bluetooth Remote is connected to " + bluetoothDevice.getName())
                         .setSmallIcon(R.drawable.remote_control)
                         .setContentIntent(pendingIntent)
+                        .setCustomBigContentView(getNotificationButtonsRemoteViews())
                         .build();
         startForeground(1, notification);
         isRunning = true;
+    }
+
+    private RemoteViews getNotificationButtonsRemoteViews() {
+        Intent powerIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        powerIntent.setAction(ACTION_POWER);
+        PendingIntent powerPI = PendingIntent.getBroadcast(this, 0, powerIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent muteIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        muteIntent.setAction(ACTION_MUTE);
+        PendingIntent mutePI = PendingIntent.getBroadcast(this, 0, muteIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent upIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        upIntent.setAction(ACTION_UP);
+        PendingIntent upPI = PendingIntent.getBroadcast(this, 0, upIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent menuIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        menuIntent.setAction(ACTION_MENU);
+        PendingIntent menuPI = PendingIntent.getBroadcast(this, 0, menuIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent homeIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        homeIntent.setAction(ACTION_HOME);
+        PendingIntent homePI = PendingIntent.getBroadcast(this, 0, homeIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent leftIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        leftIntent.setAction(ACTION_LEFT);
+        PendingIntent leftPI = PendingIntent.getBroadcast(this, 0, leftIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent middleIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        middleIntent.setAction(ACTION_MIDDLE);
+        PendingIntent middlePI = PendingIntent.getBroadcast(this, 0, middleIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent rightIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        rightIntent.setAction(ACTION_RIGHT);
+        PendingIntent rightPI = PendingIntent.getBroadcast(this, 0, rightIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent backIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        backIntent.setAction(ACTION_BACK);
+        PendingIntent backPI = PendingIntent.getBroadcast(this, 0, backIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent downIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        downIntent.setAction(ACTION_DOWN);
+        PendingIntent downPI = PendingIntent.getBroadcast(this, 0, downIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent rewindIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        rewindIntent.setAction(ACTION_REWIND);
+        PendingIntent rewindPI = PendingIntent.getBroadcast(this, 0, rewindIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent forwardIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        forwardIntent.setAction(ACTION_FORWARD);
+        PendingIntent forwardPI = PendingIntent.getBroadcast(this, 0, forwardIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent playPauseIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        playPauseIntent.setAction(ACTION_PLAY_PAUSE);
+        PendingIntent playPausePI = PendingIntent.getBroadcast(this, 0, playPauseIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent volIncIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        volIncIntent.setAction(ACTION_VOL_INC);
+        PendingIntent volIncPI = PendingIntent.getBroadcast(this, 0, volIncIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        Intent volDecIntent = new Intent(this, NotificationBroadcastReceiver.class);
+        volDecIntent.setAction(ACTION_VOL_DEC);
+        PendingIntent volDecPI = PendingIntent.getBroadcast(this, 0, volDecIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_buttons);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnPower, powerPI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnMute, mutePI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnUp, upPI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnMenu, menuPI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnHome, homePI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnLeft, leftPI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnMiddle, middlePI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnRight, rightPI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnBack, backPI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnDown, downPI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnVolInc, volIncPI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnRewind, rewindPI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnForward, forwardPI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnPlayPause, playPausePI);
+        remoteViews.setOnClickPendingIntent(R.id.ntfBtnVolDec, volDecPI);
+
+        return remoteViews;
     }
 
     @SuppressLint("MissingPermission")

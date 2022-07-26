@@ -28,6 +28,19 @@
         <item name="android:textSize">25sp</item>
     </style>
 
+    <style name="notification_button_style" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textSize">50sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:padding">2dp</item>
+    </style>
 
+
+    <!--
+
+    style="?android:attr/buttonBarButtonStyle"
+    -->
 
 </resources>

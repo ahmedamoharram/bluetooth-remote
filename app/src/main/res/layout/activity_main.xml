@@ -36,10 +36,10 @@
                 style="@style/half_button_style" />
 
             <Button
-                android:id="@+id/btnSource"
-                android:text="Ad"
-                android:visibility="invisible"
-                style="@style/half_button_style" />
+                android:id="@+id/btnPair"
+                style="@style/half_button_style"
+                android:text="📶"
+                android:visibility="invisible" />
 
         </LinearLayout>
 
@@ -55,7 +55,7 @@
 
             <Button
                 android:id="@+id/btnMenu"
-                android:text="@string/btn_menu"
+                android:text="@string/btn_gear"
                 style="@style/half_button_style" />
 
             <Button

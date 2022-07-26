@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="5dp"
+    android:layout_marginVertical="5dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/ntfBtnPower"
+            style="@style/notification_button_style"
+            android:text="@string/btn_power" />
+
+        <Button
+            android:id="@+id/ntfBtnMute"
+            style="@style/notification_button_style"
+            android:text="@string/btn_mute" />
+
+        <Button
+            android:id="@+id/ntfBtnUp"
+            style="@style/notification_button_style"
+            android:text="@string/btn_up"/>
+
+        <Button
+            android:id="@+id/ntfBtnMenu"
+            style="@style/notification_button_style"
+            android:text="@string/btn_gear"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/ntfBtnHome"
+            style="@style/notification_button_style"
+            android:text="@string/btn_home"/>
+
+        <Button
+            android:id="@+id/ntfBtnLeft"
+            style="@style/notification_button_style"
+            android:text="@string/btn_left"/>
+
+        <Button
+            android:id="@+id/ntfBtnMiddle"
+            style="@style/notification_button_style"
+            android:text="@string/btn_middle"/>
+
+        <Button
+            android:id="@+id/ntfBtnRight"
+            style="@style/notification_button_style"
+            android:text="@string/btn_right"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/ntfBtnBack"
+            style="@style/notification_button_style"
+            android:text="@string/btn_back" />
+
+        <Button
+            android:id="@+id/ntfBtnDummy"
+            android:visibility="invisible"
+            style="@style/notification_button_style"
+            android:text="@string/btn_forward" />
+
+        <Button
+            android:id="@+id/ntfBtnDown"
+            style="@style/notification_button_style"
+            android:text="@string/btn_down"/>
+
+        <Button
+            android:id="@+id/ntfBtnVolInc"
+            style="@style/notification_button_style"
+            android:text="@string/btn_vol_up"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/ntfBtnRewind"
+            style="@style/notification_button_style"
+            android:text="@string/btn_rewind" />
+
+        <Button
+            android:id="@+id/ntfBtnForward"
+            style="@style/notification_button_style"
+            android:text="@string/btn_forward" />
+
+        <Button
+            android:id="@+id/ntfBtnPlayPause"
+            style="@style/notification_button_style"
+            android:text="@string/btn_play_pause"/>
+
+        <Button
+            android:id="@+id/ntfBtnVolDec"
+            style="@style/notification_button_style"
+            android:text="@string/btn_vol_down"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

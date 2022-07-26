@@ -16,13 +16,16 @@
     <string name="btn_power">⛔</string>
     <string name="btn_mute">🔇</string>
     <string name="btn_menu">☰</string>
+    <string name="btn_gear">⚙️</string>
     <string name="btn_vol_up">🔊</string>
     <string name="btn_vol_down">🔉</string>
     <string name="btn_play_pause">⏯️</string>
     <string name="btn_rewind">⏪</string>
     <string name="btn_forward">⏩</string>
 
-
+    <string name="play_pause">Play/Pause</string>
+    <string name="vol_inc">Vol+</string>
+    <string name="vol_dec">Vol-</string>
 
 
 </resources>

@@ -5,9 +5,14 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -50,11 +55,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RemoteViews;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.bluetoothremote.R;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
@@ -67,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     static final int MESSAGE_FROM_SCAN_THREAD = 4;
     private BluetoothManager bluetoothManager;
     private BluetoothAdapter bluetoothAdapter;
-    private Vibrator vibrator;
+    static Vibrator vibrator;
     private BluetoothLeScanner bluetoothLeScanner;
     private SwitchMaterial swtConnect;
     private TextView txtOut;
@@ -210,6 +215,8 @@ public class MainActivity extends AppCompatActivity {
 //        btnPair.setOnClickListener(this::pairBtnAction);
 
         assignButtonActions();
+
+//        testNotification();
     }
 
     private void debug(String msg) {
@@ -291,8 +298,8 @@ public class MainActivity extends AppCompatActivity {
         AdvertiseSettings advertiseSettings = new AdvertiseSettings.Builder()
                 .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
                 .setConnectable(true)
-//                .setTimeout(0)
-                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+                .setTimeout(0)
+//                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
                 .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
                 .build();
 
@@ -300,28 +307,29 @@ public class MainActivity extends AppCompatActivity {
 //        byte[] mfData=hexStringToByteArray("0201");
 
         AdvertiseData advertiseData = new AdvertiseData.Builder()
-                .setIncludeTxPowerLevel(true)
-                .setIncludeDeviceName(true)
-                .addServiceUuid(Constants.DIS_UUID)
-                .addServiceUuid(Constants.HID_UUID)
-                .addServiceUuid(Constants.HOGP_UUID)
-                .addServiceUuid(Constants.BAS_UUID)
-                .build();
-//        AdvertiseData scanResult = new AdvertiseData.Builder()
 //                .setIncludeTxPowerLevel(true)
-//                .setIncludeDeviceName(true)
+                .setIncludeDeviceName(true)
+//                .addServiceUuid(Constants.DIS_UUID)
+//                .addServiceUuid(Constants.HID_UUID)
+                .addServiceUuid(Constants.HOGP_UUID)
+//                .addServiceUuid(Constants.BAS_UUID)
+                .build();
+
+        AdvertiseData scanResult = new AdvertiseData.Builder()
+//                .setIncludeTxPowerLevel(true)
+                .setIncludeDeviceName(true)
 //                .addServiceUuid(Constants.DIS_UUID)
 //                .addServiceUuid(Constants.HID_UUID)
 //                .addServiceUuid(Constants.HOGP_UUID)
 //                .addServiceUuid(Constants.BAS_UUID)
-//                .build();
+                .build();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADVERTISE}, 1);
         }
-//        bluetoothLeAdvertiser.startAdvertising(advertiseSettings, advertiseData, scanResult, advertiseCallback);
-        bluetoothLeAdvertiser.startAdvertising(advertiseSettings, advertiseData, advertiseCallback);
+        bluetoothLeAdvertiser.startAdvertising(advertiseSettings, advertiseData, scanResult, advertiseCallback);
+//        bluetoothLeAdvertiser.startAdvertising(advertiseSettings, advertiseData, advertiseCallback);
     }
 
     @SuppressLint("MissingPermission")
@@ -524,6 +532,9 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //
 //        }
+//        if (requestCode == REQUEST_CODE_NOTIFICATION_TEST) {
+//            debug("NOTIFICATION!");
+//        }
 //    }
 
     @SuppressLint("WrongConstant")
@@ -531,9 +542,9 @@ public class MainActivity extends AppCompatActivity {
         Button btnPower = findViewById(R.id.btnPower);
         Button btnMenu = findViewById(R.id.btnMenu);
 
-        Button btnSource = findViewById(R.id.btnSource);
+        Button btnPair = findViewById(R.id.btnPair);
 
-        btnSource.setOnClickListener(this::pairBtnAction);
+        btnPair.setOnClickListener(this::pairBtnAction);
 
         Button btnLeft = findViewById(R.id.btnLeft);
         Button btnRight = findViewById(R.id.btnRight);
@@ -574,7 +585,7 @@ public class MainActivity extends AppCompatActivity {
         addRemoteKeyListeners(btnPower, RemoteControlHelper.Key.POWER);
 
 //        addRemoteKeysListeners(btnSource, RemoteControlHelper.Key.ASSIGN_SELECTION, RemoteControlHelper.Key.MEDIA_SELECT_CD);
-        addRemoteKeyListeners(btnSource, RemoteControlHelper.Key.MEDIA_SELECT_CD);
+//        addRemoteKeyListeners(btnPair, RemoteControlHelper.Key.MEDIA_SELECT_CD);
 
 //        addKeyBoardListeners(btnSource, 0x91);
 
@@ -758,7 +769,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void vibrate() {
+    static void vibrate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK));
         } else {
@@ -771,8 +782,36 @@ public class MainActivity extends AppCompatActivity {
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
+                    + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
+    }
+
+    private void testNotification() {
+
+        Intent intent = new Intent(this, NotificationBroadcastReceiver.class);
+        intent.setAction("Play/Pause");
+
+        PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        RemoteViews remoteViews=new RemoteViews(getPackageName(), R.layout.notification_buttons);
+        remoteViews.setOnClickPendingIntent(R.id.btnPower,pi);
+
+        String CHANNEL_ID = "Bluetooth Remote Service";
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Bluetooth Remote Service", NotificationManager.IMPORTANCE_MIN);
+        getSystemService(NotificationManager.class).createNotificationChannel(channel);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
+        Notification notification =
+                new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setContentTitle("Bluetooth Remote")
+                        .setContentText("Test")
+                        .setSmallIcon(R.drawable.remote_control)
+                        .setContentIntent(pendingIntent)
+                        .setOngoing(true)
+//                        .setCustomContentView(new RemoteViews(getPackageName(), R.layout.test))
+                        .setCustomBigContentView(remoteViews)
+                        .build();
+
+        getSystemService(NotificationManager.class).notify(1, notification);
     }
 }

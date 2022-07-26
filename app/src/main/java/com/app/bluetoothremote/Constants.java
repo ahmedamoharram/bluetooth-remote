@@ -70,9 +70,9 @@ public class Constants {
 
     };
 
-    private static final String SDP_NAME = "Bluetooth Remote Input";
-    private static final String SDP_DESCRIPTION = "Bluetooth Remote HID Device";
-    private static final String SDP_PROVIDER = "Bluetooth Remote";
+    private static final String SDP_NAME = "BTRemote";
+    private static final String SDP_DESCRIPTION = "BTRemote";
+    private static final String SDP_PROVIDER = "AAM";
     private static final int QOS_TOKEN_RATE = 800; // 9 bytes * 1000000 us / 11250 us
     private static final int QOS_TOKEN_BUCKET_SIZE = 9;
     private static final int QOS_PEAK_BANDWIDTH = 0;
@@ -85,9 +85,9 @@ public class Constants {
                     Constants.SDP_PROVIDER,
 //                    BluetoothHidDevice.SUBCLASS1_MOUSE,
 //                    BluetoothHidDevice.SUBCLASS1_KEYBOARD,
-                    BluetoothHidDevice.SUBCLASS1_COMBO,
+//                    BluetoothHidDevice.SUBCLASS1_COMBO,
 //                    BluetoothHidDevice.SUBCLASS2_REMOTE_CONTROL,
-//                    BluetoothHidDevice.SUBCLASS2_UNCATEGORIZED,
+                    BluetoothHidDevice.SUBCLASS2_UNCATEGORIZED,
 //                    BluetoothHidDevice.SUBCLASS1_NONE,
                     Constants.HID_REPORT_DESC);
 //                    Constants.HID_REPORT_DESC_TEST);

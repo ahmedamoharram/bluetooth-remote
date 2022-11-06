@@ -1,167 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="2dp">
 
-    <TableRow>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_weight="1"
+    android:scrollbars="none">
 
-        <Spinner
-            android:layout_span="2"
-            android:id="@+id/cmbBondedDevices"
-            android:layout_gravity="center_vertical"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/swtConnect"
-            android:layout_span="2"
-            android:layout_gravity="end"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Connect" />
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="2dp">
 
-    </TableRow>
+        <TableRow>
 
-    <TableRow>
+            <Spinner
+                android:id="@+id/cmbBondedDevices"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_span="2"
+                android:layout_weight="1" />
 
-        <LinearLayout
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swtConnect"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_span="2"
+                android:layout_weight="1"
+                android:text="Connect" />
 
-            <Button
-                android:id="@+id/btnPower"
-                android:text="@string/btn_power"
-                style="@style/half_button_style" />
+        </TableRow>
 
-            <Button
-                android:id="@+id/btnPair"
-                style="@style/half_button_style"
-                android:text="📶"
-                android:visibility="invisible" />
+        <TableRow>
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btnUp"
-            android:text="@string/btn_up"
-            style="@style/full_button_style" />
+                <Button
+                    android:id="@+id/btnPower"
+                    style="@style/half_button_style"
+                    android:text="@string/btn_power" />
 
-        <LinearLayout
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+                <Button
+                    android:id="@+id/btnPair"
+                    style="@style/half_button_style"
+                    android:text="📶"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
 
             <Button
-                android:id="@+id/btnMenu"
-                android:text="@string/btn_gear"
-                style="@style/half_button_style" />
+                android:id="@+id/btnUp"
+                style="@style/full_button_style"
+                android:text="@string/btn_up" />
+
+            <LinearLayout
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btnMenu"
+                    style="@style/half_button_style"
+                    android:text="@string/btn_gear" />
+
+                <Button
+                    android:id="@+id/btnMute"
+                    style="@style/half_button_style"
+                    android:text="@string/btn_mute" />
+
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow>
 
             <Button
-                android:id="@+id/btnMute"
-                android:text="@string/btn_mute"
-                style="@style/half_button_style" />
-
-        </LinearLayout>
-
-    </TableRow>
-
-    <TableRow>
-
-        <Button
-            android:id="@+id/btnLeft"
-            android:text="@string/btn_left"
-            style="@style/full_button_style" />
-
-        <Button
-            android:id="@+id/btnMiddle"
-            android:text="@string/btn_middle"
-            style="@style/full_button_style" />
-
-        <Button
-            android:id="@+id/btnRight"
-            android:text="@string/btn_right"
-            style="@style/full_button_style" />
-    </TableRow>
-
-    <TableRow>
-
-        <Button
-            android:id="@+id/btnHome"
-            android:text="@string/btn_home"
-            style="@style/full_button_style" />
-
-        <Button
-            android:id="@+id/btnDown"
-            android:text="@string/btn_down"
-            style="@style/full_button_style" />
-
-        <Button
-            android:id="@+id/btnBack"
-            android:text="@string/btn_back"
-            style="@style/full_button_style" />
-
-    </TableRow>
-
-    <TableRow>
-
-        <Button
-            android:id="@+id/btnRewind"
-            android:text="@string/btn_rewind"
-            style="@style/full_button_style" />
-
-        <Button
-            android:id="@+id/btnForward"
-            android:text="@string/btn_forward"
-            style="@style/full_button_style" />
-
-        <Button
-            android:id="@+id/btnPlayPause"
-            android:text="@string/btn_play_pause"
-            style="@style/full_button_style" />
-
-        <LinearLayout
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+                android:id="@+id/btnLeft"
+                style="@style/full_button_style"
+                android:text="@string/btn_left" />
 
             <Button
-                android:id="@+id/btnVolInc"
-                android:text="@string/btn_vol_up"
-                style="@style/half_button_style" />
+                android:id="@+id/btnMiddle"
+                style="@style/full_button_style"
+                android:text="@string/btn_middle" />
 
             <Button
-                android:id="@+id/btnVolDec"
-                android:text="@string/btn_vol_down"
-                style="@style/half_button_style" />
+                android:id="@+id/btnRight"
+                style="@style/full_button_style"
+                android:text="@string/btn_right" />
+        </TableRow>
 
-        </LinearLayout>
+        <TableRow>
 
-    </TableRow>
+            <Button
+                android:id="@+id/btnHome"
+                style="@style/full_button_style"
+                android:text="@string/btn_home" />
 
-    <TableRow>
+            <Button
+                android:id="@+id/btnDown"
+                style="@style/full_button_style"
+                android:text="@string/btn_down" />
 
-        <EditText
-            android:id="@+id/txtInput"
-            android:layout_span="2"
-            android:layout_weight="1"
-            android:hint="Type text here to send."
-            android:inputType="text" />
+            <Button
+                android:id="@+id/btnBack"
+                style="@style/full_button_style"
+                android:text="@string/btn_back" />
 
-    </TableRow>
+        </TableRow>
 
-    <TableRow>
-        <TextView
-            android:id="@+id/txtOut"
-            android:layout_span="4"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_margin="2dp" />
-    </TableRow>
+        <TableRow>
+
+            <Button
+                android:id="@+id/btnRewind"
+                style="@style/full_button_style"
+                android:text="@string/btn_rewind" />
+
+            <Button
+                android:id="@+id/btnForward"
+                style="@style/full_button_style"
+                android:text="@string/btn_forward" />
+
+            <Button
+                android:id="@+id/btnPlayPause"
+                style="@style/full_button_style"
+                android:text="@string/btn_play_pause" />
+
+            <LinearLayout
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btnVolInc"
+                    style="@style/half_button_style"
+                    android:text="@string/btn_vol_up" />
+
+                <Button
+                    android:id="@+id/btnVolDec"
+                    style="@style/half_button_style"
+                    android:text="@string/btn_vol_down" />
+
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow>
+
+            <EditText
+                android:id="@+id/txtInput"
+                android:layout_span="2"
+                android:layout_weight="1"
+                android:hint="Type text here to send."
+                android:inputType="text" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtOut"
+                android:layout_width="match_parent"
+                android:layout_margin="2dp"
+                android:layout_span="4"
+                android:layout_weight="1" />
+        </TableRow>
 
 
+    </TableLayout>
 
 
-
-</TableLayout>
+</ScrollView>

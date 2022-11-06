@@ -25,7 +25,7 @@
         <item name="android:layout_marginStart">2dp</item>
         <item name="android:layout_marginEnd">2dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:textSize">25sp</item>
+        <item name="android:textSize">30sp</item>
     </style>
 
     <style name="notification_button_style" parent="Widget.AppCompat.Button.Borderless">

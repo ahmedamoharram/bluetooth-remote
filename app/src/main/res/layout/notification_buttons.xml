@@ -12,14 +12,9 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/ntfBtnPower"
+            android:id="@+id/ntfBtnHome"
             style="@style/notification_button_style"
-            android:text="@string/btn_power" />
-
-        <Button
-            android:id="@+id/ntfBtnMute"
-            style="@style/notification_button_style"
-            android:text="@string/btn_mute" />
+            android:text="@string/btn_home"/>
 
         <Button
             android:id="@+id/ntfBtnUp"
@@ -27,22 +22,16 @@
             android:text="@string/btn_up"/>
 
         <Button
-            android:id="@+id/ntfBtnMenu"
+            android:id="@+id/ntfBtnVolInc"
             style="@style/notification_button_style"
-            android:text="@string/btn_gear"/>
+            android:text="@string/btn_vol_up"/>
 
     </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/ntfBtnHome"
-            style="@style/notification_button_style"
-            android:text="@string/btn_home"/>
 
         <Button
             android:id="@+id/ntfBtnLeft"
@@ -72,42 +61,9 @@
             android:text="@string/btn_back" />
 
         <Button
-            android:id="@+id/ntfBtnDummy"
-            android:visibility="invisible"
-            style="@style/notification_button_style"
-            android:text="@string/btn_forward" />
-
-        <Button
             android:id="@+id/ntfBtnDown"
             style="@style/notification_button_style"
             android:text="@string/btn_down"/>
-
-        <Button
-            android:id="@+id/ntfBtnVolInc"
-            style="@style/notification_button_style"
-            android:text="@string/btn_vol_up"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/ntfBtnRewind"
-            style="@style/notification_button_style"
-            android:text="@string/btn_rewind" />
-
-        <Button
-            android:id="@+id/ntfBtnForward"
-            style="@style/notification_button_style"
-            android:text="@string/btn_forward" />
-
-        <Button
-            android:id="@+id/ntfBtnPlayPause"
-            style="@style/notification_button_style"
-            android:text="@string/btn_play_pause"/>
 
         <Button
             android:id="@+id/ntfBtnVolDec"
@@ -115,6 +71,5 @@
             android:text="@string/btn_vol_down"/>
 
     </LinearLayout>
-
 
 </LinearLayout>

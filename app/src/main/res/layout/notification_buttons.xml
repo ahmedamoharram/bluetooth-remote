@@ -1,75 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginHorizontal="5dp"
-    android:layout_marginVertical="5dp"
-    android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/ntfBtnHome"
-            style="@style/notification_button_style"
-            android:text="@string/btn_home"/>
-
-        <Button
-            android:id="@+id/ntfBtnUp"
-            style="@style/notification_button_style"
-            android:text="@string/btn_up"/>
-
-        <Button
-            android:id="@+id/ntfBtnVolInc"
-            style="@style/notification_button_style"
-            android:text="@string/btn_vol_up"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/ntfBtnLeft"
-            style="@style/notification_button_style"
-            android:text="@string/btn_left"/>
-
-        <Button
-            android:id="@+id/ntfBtnMiddle"
-            style="@style/notification_button_style"
-            android:text="@string/btn_middle"/>
-
-        <Button
-            android:id="@+id/ntfBtnRight"
-            style="@style/notification_button_style"
-            android:text="@string/btn_right"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/ntfBtnBack"
-            style="@style/notification_button_style"
-            android:text="@string/btn_back" />
-
-        <Button
-            android:id="@+id/ntfBtnDown"
-            style="@style/notification_button_style"
-            android:text="@string/btn_down"/>
-
-        <Button
-            android:id="@+id/ntfBtnVolDec"
-            style="@style/notification_button_style"
-            android:text="@string/btn_vol_down"/>
-
-    </LinearLayout>
-
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="5.0dip" android:layout_marginVertical="5.0dip">
+	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+		<Button android:id="@id/ntfBtnHome" android:text="@string/btn_home" style="@style/notification_button_style" />
+		<Button android:id="@id/ntfBtnUp" android:text="@string/btn_up" style="@style/notification_button_style" />
+		<Button android:id="@id/ntfBtnVolInc" android:text="@string/btn_vol_up" style="@style/notification_button_style" />
+	</LinearLayout>
+	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+		<Button android:id="@id/ntfBtnLeft" android:text="@string/btn_left" style="@style/notification_button_style" />
+		<Button android:id="@id/ntfBtnMiddle" android:text="@string/btn_middle" style="@style/notification_button_style" />
+		<Button android:id="@id/ntfBtnRight" android:text="@string/btn_right" style="@style/notification_button_style" />
+	</LinearLayout>
+	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+		<Button android:id="@id/ntfBtnBack" android:text="@string/btn_back" style="@style/notification_button_style" />
+		<Button android:id="@id/ntfBtnDown" android:text="@string/btn_down" style="@style/notification_button_style" />
+		<Button android:id="@id/ntfBtnVolDec" android:text="@string/btn_vol_down" style="@style/notification_button_style" />
+	</LinearLayout>
 </LinearLayout>

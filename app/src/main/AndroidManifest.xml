@@ -34,6 +34,7 @@
             android:icon="@mipmap/remote_control_launcher"
             android:roundIcon="@mipmap/remote_control_launcher"
             android:showOnLockScreen="true"
+            android:screenOrientation="sensorPortrait"
             android:showWhenLocked="true"
             android:launchMode="singleInstance">
             <intent-filter>

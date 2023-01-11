@@ -9,8 +9,8 @@ android {
         applicationId "com.app.bluetoothremote"
         minSdk 28
         targetSdk 33
-        versionCode 5
-        versionName '2.3'
+        versionCode 7
+        versionName '3'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.debug
@@ -35,4 +35,7 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
 }

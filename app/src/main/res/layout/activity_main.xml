@@ -7,7 +7,7 @@
     android:scrollbars="none">
 
 
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="2dp">
@@ -16,18 +16,19 @@
 
             <Spinner
                 android:id="@+id/cmbBondedDevices"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_gravity="center_vertical"
                 android:layout_span="2"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:contentDescription="@string/bonded_devices" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/swtConnect"
-                android:layout_height="wrap_content"
+                android:id="@+id/swtConnectMouse"
+                android:layout_height="48dp"
                 android:layout_gravity="end"
                 android:layout_span="2"
                 android:layout_weight="1"
-                android:text="Connect" />
+                android:text="@string/mouse" />
 
         </TableRow>
 
@@ -152,9 +153,10 @@
 
             <EditText
                 android:id="@+id/txtInput"
+                android:layout_height="48dp"
                 android:layout_span="2"
                 android:layout_weight="1"
-                android:hint="Type text here to send."
+                android:hint="@string/type_text_here"
                 android:inputType="text" />
 
         </TableRow>
@@ -167,6 +169,45 @@
                 android:layout_margin="2dp"
                 android:layout_span="4"
                 android:layout_weight="1" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/cur_left"
+                style="@style/full_button_style"
+                android:text="@string/btn_middle"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/cur_middle"
+                style="@style/full_button_style"
+                android:text="@string/btn_middle"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/cur_right"
+                style="@style/full_button_style"
+                android:text="@string/btn_middle"
+                android:visibility="invisible" />
+        </TableRow>
+
+        <TableRow>
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                android:layout_height="30dp"
+                android:visibility="invisible" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:id="@+id/seekBarLabel"
+                android:text="@string/cursor_sensitivity"
+                android:layout_weight="1"
+                android:labelFor="@id/seekBar"
+                android:textAlignment="center"
+                android:visibility="invisible"/>
         </TableRow>
 
 

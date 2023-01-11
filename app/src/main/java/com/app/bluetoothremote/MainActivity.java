@@ -40,6 +40,10 @@ import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -50,12 +54,15 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RemoteViews;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,7 +73,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private static final String TAG = "BluetoothTest";
     private static final int REQUEST_CODE_BT_DEVICE_SELECTED = 1;
     static final int MESSAGE_FROM_SCAN_THREAD = 4;
@@ -75,12 +82,105 @@ public class MainActivity extends AppCompatActivity {
     static Vibrator vibrator;
     private BluetoothLeScanner bluetoothLeScanner;
     private SwitchMaterial swtConnect;
+    private SwitchMaterial swtConnectMouse;
     private TextView txtOut;
     private EditText txtInput;
     private Spinner cmbBondedDevices;
     protected static Handler handlerUi;
     private List<Button> buttons;
     private ActivityResultLauncher<Intent> launcherEnableBluetooth;
+    private SensorManager sensorManager;
+    private Sensor sensorGyroscope;
+    private Button btnCurLeft;
+    private Button btnCurClick;
+    private Button btnCurRight;
+    private SeekBar seekBar;
+    private TextView seekBarLabel;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        MenuItem item = menu.findItem(R.id.item_connect);
+        item.setActionView(R.layout.switch_item);
+
+        swtConnect = item.getActionView().findViewById(R.id.swtConnect);
+        swtConnect.setOnClickListener(this::connectSwitchAction);
+        return true;
+    }
+
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        System.out.println(item.getItemId());
+//        switch(item.getItemId()){
+//            case R.id.swtConnect2:
+//                System.out.println("swtConnect2");
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+//    }
+
+    @Override
+    @SuppressLint({"MissingPermission", "ClickableViewAccessibility"})
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        //Hide the Action bar
+//        Objects.requireNonNull(this.getSupportActionBar()).hide();
+
+
+        bluetoothManager = getSystemService(BluetoothManager.class);
+        bluetoothAdapter = bluetoothManager.getAdapter();
+        vibrator = getSystemService(Vibrator.class);
+//        companionDeviceManager = getSystemService(CompanionDeviceManager.class);
+
+        launcherEnableBluetooth = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), activityResult -> {
+//            debug("bluetooth enabled?" + activityResult.getResultCode());
+            if (activityResult.getResultCode() == -1) { // enabled
+                populateBondedDevices();
+            } else {
+                Toast.makeText(MainActivity.this, "Bluetooth not enabled, exiting now.", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        });
+
+//        if (!bluetoothAdapter.isEnabled()) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+//                    ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
+//            }
+//            launcherEnableBluetooth.launch(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE));
+//        } else {
+//            populateBondedDevices();
+//        }
+
+        btnCurLeft = findViewById(R.id.cur_left);
+        btnCurClick = findViewById(R.id.cur_middle);
+        btnCurRight = findViewById(R.id.cur_right);
+        swtConnectMouse = findViewById(R.id.swtConnectMouse);
+        swtConnectMouse.setOnClickListener(this::connectMouseAction);
+
+        txtOut = findViewById(R.id.txtOut);
+//        txtOut.setMaxLines(40);
+
+        txtInput = findViewById(R.id.txtInput);
+        txtInput.setEnabled(false);
+
+//        Button btnPair = findViewById(R.id.btnPair);
+//        btnPair.setOnClickListener(this::pairBtnAction);
+
+        seekBar=findViewById(R.id.seekBar);
+        seekBar.setMin(1);
+        seekBar.setMax(60);
+        seekBar.setProgress(30);
+        seekBarLabel=findViewById(R.id.seekBarLabel);
+
+        assignButtonActions();
+
+//        testNotification();
+    }
 
     private void createUIHandler() {
         if (handlerUi == null) {
@@ -105,6 +205,50 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
         }
+    }
+
+    private void connectMouseAction(View v) {
+        if (swtConnectMouse.isChecked()) {
+            startGyroscope();
+        } else {
+            stopGyroscope();
+        }
+    }
+
+    private void startGyroscope() {
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensorGyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        if (sensorGyroscope != null) {
+            sensorManager.registerListener(this, sensorGyroscope, 10000);
+            btnCurLeft.setVisibility(View.VISIBLE);
+            btnCurRight.setVisibility(View.VISIBLE);
+            seekBar.setVisibility(View.VISIBLE);
+            seekBarLabel.setVisibility(View.VISIBLE);
+        } else {
+            Toast.makeText(this, "No Gyroscope sensor!", Toast.LENGTH_LONG).show();
+            swtConnectMouse.setChecked(false);
+        }
+    }
+
+    private void stopGyroscope() {
+        if (sensorManager != null)
+            sensorManager.unregisterListener(this);
+        btnCurLeft.setVisibility(View.INVISIBLE);
+        btnCurRight.setVisibility(View.INVISIBLE);
+        seekBar.setVisibility(View.INVISIBLE);
+        seekBarLabel.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if (BluetoothHidService.isHidDeviceConnected && sensorGyroscope != null) {
+            MouseHelper.sendData(false, false, false, Math.round(sensorEvent.values[2] * seekBar.getProgress()) * -1,
+                    Math.round(sensorEvent.values[0] * seekBar.getProgress()) * -1, 0);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
     }
 
     private void setButtonsEnabled(boolean enabled) {
@@ -153,12 +297,18 @@ public class MainActivity extends AppCompatActivity {
             startService();
         } else {
             stopService();
+            swtConnectMouse.setChecked(false);
+            stopGyroscope();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (swtConnect != null)
+            swtConnect.setChecked(BluetoothHidService.isRunning);
+
         if (!bluetoothAdapter.isEnabled()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                     ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
@@ -168,55 +318,18 @@ public class MainActivity extends AppCompatActivity {
         } else {
             populateBondedDevices();
         }
+
+        if (swtConnectMouse.isChecked()) {
+            startGyroscope();
+        }
     }
 
     @Override
-    @SuppressLint({"MissingPermission", "ClickableViewAccessibility"})
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        bluetoothManager = getSystemService(BluetoothManager.class);
-        bluetoothAdapter = bluetoothManager.getAdapter();
-        vibrator = getSystemService(Vibrator.class);
-//        companionDeviceManager = getSystemService(CompanionDeviceManager.class);
-
-        launcherEnableBluetooth = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), activityResult -> {
-//            debug("bluetooth enabled?" + activityResult.getResultCode());
-            if (activityResult.getResultCode() == -1) { // enabled
-                populateBondedDevices();
-            } else {
-                Toast.makeText(MainActivity.this, "Bluetooth not enabled, exiting now.", Toast.LENGTH_LONG).show();
-                finish();
-            }
-        });
-
-//        if (!bluetoothAdapter.isEnabled()) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-//                    ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
-//            }
-//            launcherEnableBluetooth.launch(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE));
-//        } else {
-//            populateBondedDevices();
-//        }
-
-        swtConnect = findViewById(R.id.swtConnect);
-        swtConnect.setChecked(BluetoothHidService.isRunning);
-        swtConnect.setOnClickListener(this::connectSwitchAction);
-
-        txtOut = findViewById(R.id.txtOut);
-//        txtOut.setMaxLines(40);
-
-        txtInput = findViewById(R.id.txtInput);
-        txtInput.setEnabled(false);
-
-//        Button btnPair = findViewById(R.id.btnPair);
-//        btnPair.setOnClickListener(this::pairBtnAction);
-
-        assignButtonActions();
-
-//        testNotification();
+    protected void onPause() {
+        super.onPause();
+        if (cmbBondedDevices != null)
+            getSharedPreferences().edit().putInt("selectedBluetoothDevice", cmbBondedDevices.getSelectedItemPosition()).apply();
+        stopGyroscope();
     }
 
     private void debug(String msg) {
@@ -232,7 +345,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //    @SuppressLint("MissingPermission")
     private void populateBondedDevices() {
         cmbBondedDevices = findViewById(R.id.cmbBondedDevices);
         List<BondedDevice> spinnerArray = new ArrayList<>();
@@ -264,13 +376,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (cmbBondedDevices != null)
-            getSharedPreferences().edit().putInt("selectedBluetoothDevice", cmbBondedDevices.getSelectedItemPosition()).apply();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
         if (cmbBondedDevices != null)
             getSharedPreferences().edit().putInt("selectedBluetoothDevice", cmbBondedDevices.getSelectedItemPosition()).apply();
     }
@@ -537,7 +642,10 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //    }
 
-    @SuppressLint("WrongConstant")
+//    static int x = 0;
+//    static int y = 0;
+
+    @SuppressLint({"WrongConstant", "ClickableViewAccessibility"})
     private void assignButtonActions() {
         Button btnPower = findViewById(R.id.btnPower);
         Button btnMenu = findViewById(R.id.btnMenu);
@@ -557,10 +665,8 @@ public class MainActivity extends AppCompatActivity {
         Button btnVolDec = findViewById(R.id.btnVolDec);
         Button btnMute = findViewById(R.id.btnMute);
         Button btnPlayPause = findViewById(R.id.btnPlayPause);
-
         Button btnRewind = findViewById(R.id.btnRewind);
         Button btnForward = findViewById(R.id.btnForward);
-
 
         buttons = new ArrayList<>();
         buttons.add(btnLeft);
@@ -578,7 +684,29 @@ public class MainActivity extends AppCompatActivity {
         buttons.add(btnMute);
         buttons.add(btnRewind);
         buttons.add(btnForward);
-//        buttons.add(btnSource);
+        buttons.add(swtConnectMouse);
+
+        //TESTING
+        buttons.add(btnCurLeft);
+        buttons.add(btnCurClick);
+        buttons.add(btnCurRight);
+        btnCurLeft.setOnTouchListener((view, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                boolean sent = MouseHelper.sendData(true, false, false, 0, 0, 0);
+                if (sent)
+                    vibrate();
+            }
+            return false;
+        });
+        btnCurRight.setOnTouchListener((view, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                boolean sent = MouseHelper.sendData(false, true, false, 0, 0, 0);
+                if (sent)
+                    vibrate();
+            }
+            return false;
+        });
+
 
         setButtonsEnabled(BluetoothHidService.isRunning);
 
@@ -794,8 +922,8 @@ public class MainActivity extends AppCompatActivity {
 
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        RemoteViews remoteViews=new RemoteViews(getPackageName(), R.layout.notification_buttons);
-        remoteViews.setOnClickPendingIntent(R.id.btnPower,pi);
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_buttons);
+        remoteViews.setOnClickPendingIntent(R.id.btnPower, pi);
 
         String CHANNEL_ID = "Bluetooth Remote Service";
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Bluetooth Remote Service", NotificationManager.IMPORTANCE_MIN);
@@ -814,4 +942,5 @@ public class MainActivity extends AppCompatActivity {
 
         getSystemService(NotificationManager.class).notify(1, notification);
     }
+
 }

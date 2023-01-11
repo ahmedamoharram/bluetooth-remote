@@ -4,6 +4,9 @@
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="bonded_devices">Paired Devices</string>
+    <string name="connect">Connect</string>
+    <string name="mouse">Air Mouse🖱</string>
 
     <string name="btn_left">◀️</string>
     <string name="btn_right">▶️</string>
@@ -26,6 +29,7 @@
     <string name="play_pause">Play/Pause</string>
     <string name="vol_inc">Vol+</string>
     <string name="vol_dec">Vol-</string>
-
+    <string name="type_text_here">⌨ Type text here to send</string>
+    <string name="cursor_sensitivity">Cursor Sensitivity</string>
 
 </resources>

@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-feature android:name="android.hardware.bluetooth_le" />
@@ -32,29 +33,29 @@
             android:name=".MainActivity"
             android:exported="true"
             android:icon="@mipmap/remote_control_launcher"
+            android:launchMode="singleInstance"
             android:roundIcon="@mipmap/remote_control_launcher"
             android:showOnLockScreen="true"
-            android:showWhenLocked="true"
-            android:launchMode="singleInstance">
+            android:showWhenLocked="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service
             android:name=".BluetoothTileService"
+            android:exported="true"
             android:icon="@drawable/remote_control"
             android:label="Bluetooth Remote"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
-            android:exported="true">
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
 
         <receiver android:name=".NotificationBroadcastReceiver" />
-
     </application>
 
 </manifest>

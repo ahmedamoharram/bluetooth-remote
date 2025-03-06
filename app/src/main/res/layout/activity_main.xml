@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_weight="1"
+    android:fitsSystemWindows="true"
     android:scrollbars="none">
-
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="2dp">
 
         <TableRow>
@@ -30,6 +30,27 @@
                 android:layout_weight="1"
                 android:text="@string/mouse" />
 
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/cur_row"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/cur_left"
+                style="@style/full_button_style"
+                android:text="@string/btn_middle" />
+
+            <Button
+                android:id="@+id/cur_middle"
+                style="@style/full_button_style"
+                android:text="@string/btn_middle" />
+
+            <Button
+                android:id="@+id/cur_right"
+                style="@style/full_button_style"
+                android:text="@string/btn_middle" />
         </TableRow>
 
         <TableRow>
@@ -45,9 +66,9 @@
                     android:text="@string/btn_power" />
 
                 <Button
-                    android:id="@+id/btnPair"
+                    android:id="@+id/btnDiscover"
                     style="@style/half_button_style"
-                    android:text="📶"
+                    android:text="@string/btn_discover"
                     android:visibility="invisible" />
 
             </LinearLayout>
@@ -156,6 +177,7 @@
                 android:layout_height="48dp"
                 android:layout_span="2"
                 android:layout_weight="1"
+                android:autofillHints="@string/type_text_here"
                 android:hint="@string/type_text_here"
                 android:inputType="text" />
 
@@ -171,26 +193,7 @@
                 android:layout_weight="1" />
         </TableRow>
 
-        <TableRow>
 
-            <Button
-                android:id="@+id/cur_left"
-                style="@style/full_button_style"
-                android:text="@string/btn_middle"
-                android:visibility="invisible" />
-
-            <Button
-                android:id="@+id/cur_middle"
-                style="@style/full_button_style"
-                android:text="@string/btn_middle"
-                android:visibility="invisible" />
-
-            <Button
-                android:id="@+id/cur_right"
-                style="@style/full_button_style"
-                android:text="@string/btn_middle"
-                android:visibility="invisible" />
-        </TableRow>
 
         <TableRow>
             <SeekBar
@@ -198,7 +201,7 @@
                 android:layout_weight="1"
                 android:layout_marginTop="20dp"
                 android:layout_height="30dp"
-                android:visibility="invisible" />
+                android:visibility="gone" />
         </TableRow>
         <TableRow>
             <TextView
@@ -207,7 +210,7 @@
                 android:layout_weight="1"
                 android:labelFor="@id/seekBar"
                 android:textAlignment="center"
-                android:visibility="invisible"/>
+                android:visibility="gone"/>
         </TableRow>
 
 

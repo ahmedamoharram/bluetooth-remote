@@ -9,7 +9,7 @@
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
 
-    <style name="full_button_style" >
+    <style name="full_button_style">
         <item name="android:layout_marginBottom">-6dp</item>
         <item name="android:layout_marginStart">2dp</item>
         <item name="android:layout_marginEnd">2dp</item>
@@ -18,7 +18,7 @@
         <item name="android:layout_height">120dp</item>
     </style>
 
-    <style name="half_button_style" >
+    <style name="half_button_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">-6dp</item>
@@ -36,6 +36,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:padding">2dp</item>
     </style>
+
 
 
     <!--

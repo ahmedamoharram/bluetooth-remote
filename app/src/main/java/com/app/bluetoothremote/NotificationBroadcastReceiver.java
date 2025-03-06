@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import java.util.Objects;
+
 public class NotificationBroadcastReceiver extends BroadcastReceiver {
 
 
@@ -13,7 +15,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
 
         boolean sent;
 
-        switch (intent.getAction()) {
+        switch (Objects.requireNonNull(intent.getAction())) {
             case BluetoothHidService.ACTION_PLAY_PAUSE:
                 sent = RemoteControlHelper.sendKeyDown(RemoteControlHelper.Key.PLAY_PAUSE[0], RemoteControlHelper.Key.PLAY_PAUSE[1]);
                 if (sent)

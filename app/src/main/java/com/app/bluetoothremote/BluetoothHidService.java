@@ -16,9 +16,9 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.Messenger;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -43,7 +43,7 @@ public class BluetoothHidService extends Service implements BluetoothProfile.Ser
     static final String ACTION_HOME = "ACTION_HOME";
     static final String ACTION_BACK = "ACTION_BACK";
 
-    public @interface WHAT {
+    public @interface STATUS {
         int BLUETOOTH_CONNECTING = 1;
         int BLUETOOTH_CONNECTED = 2;
         int BLUETOOTH_DISCONNECTED = 3;
@@ -66,7 +66,10 @@ public class BluetoothHidService extends Service implements BluetoothProfile.Ser
     private void init() {
         BluetoothManager bluetoothManager = getSystemService(BluetoothManager.class);
         bluetoothAdapter = bluetoothManager.getAdapter();
-        bluetoothAdapter.getProfileProxy(this, this, BluetoothProfile.HID_DEVICE);
+        boolean hidProfileSupported = bluetoothAdapter.getProfileProxy(this, this, BluetoothProfile.HID_DEVICE);
+        if (!hidProfileSupported) {
+            Toast.makeText(this, "Bluetooth HID Profile not supported!", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -92,19 +95,29 @@ public class BluetoothHidService extends Service implements BluetoothProfile.Ser
     }
 
     @SuppressLint("MissingPermission")
-    private void startAsForeground() {
+    private void startAsForeground(boolean isConnected) {
         String CHANNEL_ID = "Bluetooth Remote Service";
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Bluetooth Remote Service", NotificationManager.IMPORTANCE_MIN);
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
-        Notification notification =
-                new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setContentTitle("Bluetooth Remote")
-                        .setContentText("Bluetooth Remote is connected to " + bluetoothDevice.getName())
-                        .setSmallIcon(R.drawable.remote_control)
-                        .setContentIntent(pendingIntent)
-                        .setCustomBigContentView(getNotificationButtonsRemoteViews())
-                        .build();
+        Notification notification;
+        if (isConnected) {
+            notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle("Bluetooth Remote")
+                    .setContentText("Bluetooth Remote is connected to " + bluetoothDevice.getName())
+                    .setSmallIcon(R.drawable.remote_control)
+                    .setContentIntent(pendingIntent)
+                    .setCustomBigContentView(getNotificationButtonsRemoteViews())
+                    .build();
+        } else {
+            notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle("Bluetooth Remote")
+                    .setContentText("Bluetooth Remote is connecting to " + bluetoothDevice.getName() + " …")
+                    .setSmallIcon(R.drawable.remote_control)
+                    .setContentIntent(pendingIntent)
+//                            .setCustomBigContentView(getNotificationButtonsRemoteViews())
+                    .build();
+        }
         startForeground(1, notification);
         isRunning = true;
     }
@@ -205,10 +218,10 @@ public class BluetoothHidService extends Service implements BluetoothProfile.Ser
         isRunning = false;
 
         //Send notification to activity
-        sendMessage(WHAT.BLUETOOTH_DISCONNECTED);
+        sendMessage(STATUS.BLUETOOTH_DISCONNECTED);
     }
 
-    private void sendMessage(@WHAT int what) {
+    private void sendMessage(@STATUS int what) {
         Message message = new Message();
         message.setTarget(MainActivity.handlerUi);
         message.what = what;
@@ -226,6 +239,7 @@ public class BluetoothHidService extends Service implements BluetoothProfile.Ser
     @SuppressLint("MissingPermission")
     @Override
     public void onServiceConnected(int profile, BluetoothProfile proxy) {
+
         if (profile == BluetoothProfile.HID_DEVICE) {
             bluetoothHidDevice = (BluetoothHidDevice) proxy;
             debug("onServiceConnected profile == BluetoothProfile.HID_DEVICE");
@@ -258,25 +272,24 @@ public class BluetoothHidService extends Service implements BluetoothProfile.Ser
                 public void onConnectionStateChanged(BluetoothDevice device, int state) {
                     String stateStr = "";
                     switch (state) {
-                        case BluetoothHidDevice.STATE_CONNECTED:
+                        case BluetoothHidDevice.STATE_CONNECTED -> {
                             stateStr = "STATE_CONNECTED";
                             isHidDeviceConnected = true;
-                            sendMessage(WHAT.BLUETOOTH_CONNECTED);
-                            break;
-                        case BluetoothHidDevice.STATE_DISCONNECTED:
+                            sendMessage(STATUS.BLUETOOTH_CONNECTED);
+                            startAsForeground(true);
+                        }
+                        case BluetoothHidDevice.STATE_DISCONNECTED -> {
                             stateStr = "STATE_DISCONNECTED";
                             isHidDeviceConnected = false;
-                            sendMessage(WHAT.BLUETOOTH_DISCONNECTED);
+                            sendMessage(STATUS.BLUETOOTH_DISCONNECTED);
                             BluetoothHidService.this.stopSelf();
-                            break;
-                        case BluetoothHidDevice.STATE_CONNECTING:
+                        }
+                        case BluetoothHidDevice.STATE_CONNECTING -> {
                             stateStr = "STATE_CONNECTING";
-                            sendMessage(WHAT.BLUETOOTH_CONNECTING);
-                            startAsForeground();
-                            break;
-                        case BluetoothHidDevice.STATE_DISCONNECTING:
-                            stateStr = "STATE_DISCONNECTING";
-                            break;
+                            sendMessage(STATUS.BLUETOOTH_CONNECTING);
+                            startAsForeground(false);
+                        }
+                        case BluetoothHidDevice.STATE_DISCONNECTING -> stateStr = "STATE_DISCONNECTING";
                     }
                     boolean isProfileSupported = HidUtils.isProfileSupported(device);
                     debug("isProfileSupported " + isProfileSupported);

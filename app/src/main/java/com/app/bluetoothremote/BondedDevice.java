@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 public class BondedDevice {
     public BluetoothDevice bluetoothDevice;
+
     public BondedDevice(BluetoothDevice bluetoothDevice) {
         this.bluetoothDevice = bluetoothDevice;
     }
@@ -14,7 +15,7 @@ public class BondedDevice {
     @NonNull
     @SuppressLint("MissingPermission")
     @Override
-    public String toString(){
+    public String toString() {
         return bluetoothDevice.getName();
     }
 }

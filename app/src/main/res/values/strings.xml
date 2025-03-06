@@ -6,8 +6,13 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="bonded_devices">Paired Devices</string>
     <string name="connect">Connect</string>
+    <string name="connecting">Connecting…</string>
+    <string name="connected">Connected</string>
     <string name="mouse">Air Mouse🖱</string>
+    <string name="available_devices">Available Bluetooth Devices</string>
+    <string name="cancel">Cancel</string>
 
+    <string name="btn_discover">🔎</string>
     <string name="btn_left">◀️</string>
     <string name="btn_right">▶️</string>
     <string name="btn_up">🔼</string>
@@ -31,5 +36,7 @@
     <string name="vol_dec">Vol-</string>
     <string name="type_text_here">⌨ Type text here to send</string>
     <string name="cursor_sensitivity">Cursor Sensitivity</string>
+    <string name="title_activity_fullscreen2">FullscreenActivity2</string>
+
 
 </resources>

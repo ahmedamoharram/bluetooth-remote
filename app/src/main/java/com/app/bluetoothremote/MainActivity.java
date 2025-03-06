@@ -1,43 +1,18 @@
 package com.app.bluetoothremote;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattServerCallback;
-import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
-import android.bluetooth.le.AdvertiseCallback;
-import android.bluetooth.le.AdvertiseData;
-import android.bluetooth.le.AdvertiseSettings;
-import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
-import android.companion.AssociationRequest;
-import android.companion.BluetoothDeviceFilter;
-import android.companion.CompanionDeviceManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -53,7 +28,9 @@ import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -61,23 +38,36 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RemoteViews;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.app.bluetoothremote.databinding.ActivityMainBinding;
+import com.app.bluetoothremote.databinding.PopupBluetoothDiscoveryBinding;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private static final String TAG = "BluetoothTest";
-    private static final int REQUEST_CODE_BT_DEVICE_SELECTED = 1;
+    private static final int REQUEST_CODE_BLUETOOTH_CONNECT = 1;
+    private static final int REQUEST_CODE_BLUETOOTH_SCAN = 2;
+    private static final int REQUEST_CODE_FINE_LOCATION_ACCESS = 3;
+    private static final int REQUEST_CODE_POST_NOTIFICATION = 4;
     static final int MESSAGE_FROM_SCAN_THREAD = 4;
-    private BluetoothManager bluetoothManager;
     private BluetoothAdapter bluetoothAdapter;
     static Vibrator vibrator;
     private BluetoothLeScanner bluetoothLeScanner;
@@ -96,42 +86,57 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button btnCurRight;
     private SeekBar seekBar;
     private TextView seekBarLabel;
+    private TableRow rowCursor;
+
+    private static boolean isNotificationRefused = false;
+
+    private LinearLayout layoutBluetoothDiscover;
+    private PopupWindow popupWindow;
+
+    private ActivityMainBinding activityMainBinding;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
-        MenuItem item = menu.findItem(R.id.item_connect);
-        item.setActionView(R.layout.switch_item);
-
-        swtConnect = item.getActionView().findViewById(R.id.swtConnect);
+        MenuItem itemConnect = menu.findItem(R.id.item_connect);
+        swtConnect = Objects.requireNonNull(itemConnect.getActionView()).findViewById(R.id.swtConnect);
         swtConnect.setOnClickListener(this::connectSwitchAction);
         return true;
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        System.out.println(item.getItemId());
-//        switch(item.getItemId()){
-//            case R.id.swtConnect2:
-//                System.out.println("swtConnect2");
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection.
+        if (item.getItemId() == R.id.item_discover) {
+            showBluetoothDiscoveryPopup();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     @SuppressLint({"MissingPermission", "ClickableViewAccessibility"})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+//        View decorView = getWindow().getDecorView();
+//        decorView.setSystemUiVisibility(
+//                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION // Optional: For hiding navigation bar
+//                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // Important: Enables layout behind status bar
+//                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // Optional: Hides navigation bar (use with caution)
+//                        | View.SYSTEM_UI_FLAG_FULLSCREEN // Optional: Hides status bar (use with caution)
+//                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY // Optional: For immersive mode (hides bars until user interacts)
+//        );
+
+        activityMainBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = activityMainBinding.getRoot();
+        setContentView(view);
         //Hide the Action bar
 //        Objects.requireNonNull(this.getSupportActionBar()).hide();
 
-
-        bluetoothManager = getSystemService(BluetoothManager.class);
+        BluetoothManager bluetoothManager = getSystemService(BluetoothManager.class);
         bluetoothAdapter = bluetoothManager.getAdapter();
         vibrator = getSystemService(Vibrator.class);
 //        companionDeviceManager = getSystemService(CompanionDeviceManager.class);
@@ -146,36 +151,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
-//        if (!bluetoothAdapter.isEnabled()) {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-//                    ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
-//            }
-//            launcherEnableBluetooth.launch(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE));
-//        } else {
-//            populateBondedDevices();
-//        }
-
-        btnCurLeft = findViewById(R.id.cur_left);
-        btnCurClick = findViewById(R.id.cur_middle);
-        btnCurRight = findViewById(R.id.cur_right);
-        swtConnectMouse = findViewById(R.id.swtConnectMouse);
+        btnCurLeft = activityMainBinding.curLeft;
+        btnCurClick = activityMainBinding.curMiddle;
+        btnCurRight = activityMainBinding.curRight;
+        rowCursor = activityMainBinding.curRow;
+        swtConnectMouse = activityMainBinding.swtConnectMouse;
         swtConnectMouse.setOnClickListener(this::connectMouseAction);
 
-        txtOut = findViewById(R.id.txtOut);
+        txtOut = activityMainBinding.txtOut;
 //        txtOut.setMaxLines(40);
 
-        txtInput = findViewById(R.id.txtInput);
+        txtInput = activityMainBinding.txtInput;
         txtInput.setEnabled(false);
 
-//        Button btnPair = findViewById(R.id.btnPair);
-//        btnPair.setOnClickListener(this::pairBtnAction);
+        Button btnDiscover = activityMainBinding.btnDiscover;
+        btnDiscover.setOnClickListener(this::btnDiscoverAction);
 
-        seekBar=findViewById(R.id.seekBar);
+        seekBar = activityMainBinding.seekBar;
         seekBar.setMin(1);
         seekBar.setMax(60);
         seekBar.setProgress(30);
-        seekBarLabel=findViewById(R.id.seekBarLabel);
+        seekBarLabel = activityMainBinding.seekBarLabel;
 
         assignButtonActions();
 
@@ -188,19 +184,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 @Override
                 public void handleMessage(@NonNull Message msg) {
                     super.handleMessage(msg);
-                    if (msg.what == BluetoothHidService.WHAT.BLUETOOTH_DISCONNECTED) {
-                        swtConnect.setChecked(false);
-                        swtConnect.setEnabled(true);
-                        setButtonsEnabled(false);
-                        txtInput.setEnabled(false);
-                    } else if (msg.what == BluetoothHidService.WHAT.BLUETOOTH_CONNECTING) {
-                        swtConnect.setChecked(true);
-                        swtConnect.setEnabled(false);
-                    } else if (msg.what == BluetoothHidService.WHAT.BLUETOOTH_CONNECTED) {
-                        swtConnect.setChecked(true);
-                        swtConnect.setEnabled(true);
-                        setButtonsEnabled(true);
-                        txtInput.setEnabled(true);
+                    switch (msg.what) {
+                        case BluetoothHidService.STATUS.BLUETOOTH_DISCONNECTED -> {
+                            swtConnect.setChecked(false);
+                            swtConnect.setEnabled(true);
+                            setButtonsEnabled(false);
+                            txtInput.setEnabled(false);
+                            swtConnect.setText(R.string.connect);
+                        }
+                        case BluetoothHidService.STATUS.BLUETOOTH_CONNECTING -> {
+                            swtConnect.setChecked(true);
+                            swtConnect.setEnabled(true);
+                            swtConnect.setText(R.string.connecting);
+                        }
+                        case BluetoothHidService.STATUS.BLUETOOTH_CONNECTED -> {
+                            swtConnect.setChecked(true);
+                            swtConnect.setEnabled(true);
+                            setButtonsEnabled(true);
+                            txtInput.setEnabled(true);
+                            swtConnect.setText(R.string.connected);
+                        }
                     }
                 }
             };
@@ -220,8 +223,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         sensorGyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         if (sensorGyroscope != null) {
             sensorManager.registerListener(this, sensorGyroscope, 10000);
-            btnCurLeft.setVisibility(View.VISIBLE);
-            btnCurRight.setVisibility(View.VISIBLE);
+            rowCursor.setVisibility(View.VISIBLE);
+//            btnCurLeft.setVisibility(View.VISIBLE);
+//            btnCurRight.setVisibility(View.VISIBLE);
             seekBar.setVisibility(View.VISIBLE);
             seekBarLabel.setVisibility(View.VISIBLE);
         } else {
@@ -231,19 +235,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void stopGyroscope() {
-        if (sensorManager != null)
-            sensorManager.unregisterListener(this);
-        btnCurLeft.setVisibility(View.INVISIBLE);
-        btnCurRight.setVisibility(View.INVISIBLE);
-        seekBar.setVisibility(View.INVISIBLE);
-        seekBarLabel.setVisibility(View.INVISIBLE);
+        if (sensorManager != null) sensorManager.unregisterListener(this);
+        rowCursor.setVisibility(View.GONE);
+        seekBar.setVisibility(View.GONE);
+        seekBarLabel.setVisibility(View.GONE);
     }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (BluetoothHidService.isHidDeviceConnected && sensorGyroscope != null) {
-            MouseHelper.sendData(false, false, false, Math.round(sensorEvent.values[2] * seekBar.getProgress()) * -1,
-                    Math.round(sensorEvent.values[0] * seekBar.getProgress()) * -1, 0);
+            MouseHelper.sendData(false, false, false, Math.round(sensorEvent.values[2] * seekBar.getProgress()) * -1, Math.round(sensorEvent.values[0] * seekBar.getProgress()) * -1, 0);
         }
     }
 
@@ -258,10 +259,32 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void startService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED &&
+                !isNotificationRefused) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATION);
+        } else {
+            Intent serviceIntent = new Intent(this, BluetoothHidService.class);
+            createUIHandler();
+            BluetoothHidService.bluetoothDevice = getSelectedBluetoothDevice();
+            if (BluetoothHidService.bluetoothDevice != null) {
+                startForegroundService(serviceIntent);
+            } else {
+                Toast.makeText(MainActivity.this, "Device not supported!", Toast.LENGTH_LONG).show();
+            }
+        }
+
+    }
+
+    private void startService(BluetoothDevice bluetoothDevice) {
         Intent serviceIntent = new Intent(this, BluetoothHidService.class);
         createUIHandler();
-        BluetoothHidService.bluetoothDevice = getSelectedBluetoothDevice();
-        startForegroundService(serviceIntent);
+        BluetoothHidService.bluetoothDevice = bluetoothDevice;
+        try {
+            startForegroundService(serviceIntent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Bluetooth did not start correctly, try again a few seconds.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void stopService() {
@@ -269,26 +292,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         stopService(serviceIntent);
     }
 
-    private void pairBtnAction(View v) {
-        //                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 1);
-
-//                startBluetoothDiscovery();
-//                connectGATT();
-//                boolean bonded = bluetoothAdapter.getRemoteDevice("AC:ED:5C:63:FF:41").createBond();
-//                debug("bonded=" + bonded);
-
-        startBluetoothLEAdvertise();
-
-
-//                for (ParcelUuid parcelUuid : getSelectedBluetoothDevice().getUuids()) {
-//                    debug(parcelUuid.toString());
-//                }
-
-//                startBluetoothLEScan();
-
-//                openGattServer();
-
-//        companionPair();
+    private void btnDiscoverAction(View v) {
+        showBluetoothDiscoveryPopup();
     }
 
     private void connectSwitchAction(View v) {
@@ -306,15 +311,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onResume() {
         super.onResume();
 
-        if (swtConnect != null)
-            swtConnect.setChecked(BluetoothHidService.isRunning);
+        if (swtConnect != null) swtConnect.setChecked(BluetoothHidService.isRunning);
 
         if (!bluetoothAdapter.isEnabled()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_CODE_BLUETOOTH_CONNECT);
+            } else {
+                launcherEnableBluetooth.launch(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE));
             }
-            launcherEnableBluetooth.launch(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE));
         } else {
             populateBondedDevices();
         }
@@ -333,8 +337,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void debug(String msg) {
-        Log.e(TAG, "------------------------- " + msg);
-        txtOut.setText(msg + "\n" + txtOut.getText());
+        if (BuildConfig.DEBUG) {
+            Log.e(TAG, "------------------------- " + msg);
+            txtOut.setText(String.format("%s%n%s", msg, txtOut.getText()));
 //        txtOut.append("\n", 0, 1);
 //        txtOut.append(msg, 0, msg.length());
 
@@ -342,35 +347,41 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            txtOut.setText("");
 //        }
 //        txtOut.append(msg + "\n");
-
+        }
     }
 
     private void populateBondedDevices() {
         cmbBondedDevices = findViewById(R.id.cmbBondedDevices);
         List<BondedDevice> spinnerArray = new ArrayList<>();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED &&
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1);
-        }
-        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
-        if (bondedDevices.size() > 0) {
-            for (BluetoothDevice device : bondedDevices) {
-                spinnerArray.add(new BondedDevice(device));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, REQUEST_CODE_BLUETOOTH_CONNECT);
+        } else {
+            Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
+            if (!bondedDevices.isEmpty()) {
+                for (BluetoothDevice device : bondedDevices) {
+                    spinnerArray.add(new BondedDevice(device));
 //                debug(device.getName() + " MajorDeviceClass=" + device.getBluetoothClass().getMajorDeviceClass());
 //                debug(device.getName() + " DeviceClass=" + device.getBluetoothClass().getDeviceClass());
+                }
+            }
+            ArrayAdapter<BondedDevice> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            cmbBondedDevices.setAdapter(adapter);
+
+            if (cmbBondedDevices.getCount() > getSharedPreferences().getInt("selectedBluetoothDevice", 0)) {
+                cmbBondedDevices.setSelection(getSharedPreferences().getInt("selectedBluetoothDevice", 0));
             }
         }
-        ArrayAdapter<BondedDevice> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerArray);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        cmbBondedDevices.setAdapter(adapter);
 
-        if (cmbBondedDevices.getCount() > getSharedPreferences().getInt("selectedBluetoothDevice", 0)) {
-            cmbBondedDevices.setSelection(getSharedPreferences().getInt("selectedBluetoothDevice", 0));
-        }
+
     }
 
     private BluetoothDevice getSelectedBluetoothDevice() {
-        return ((BondedDevice) cmbBondedDevices.getSelectedItem()).bluetoothDevice;
+        if (cmbBondedDevices.getSelectedItem() instanceof BondedDevice) {
+            return ((BondedDevice) cmbBondedDevices.getSelectedItem()).bluetoothDevice;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -384,120 +395,68 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return this.getPreferences(Context.MODE_PRIVATE);
     }
 
-    //    @SuppressLint("MissingPermission")
-    private void startBluetoothLEAdvertise() {
-        AdvertiseCallback advertiseCallback = new AdvertiseCallback() {
-            @Override
-            public void onStartSuccess(AdvertiseSettings settingsInEffect) {
-                super.onStartSuccess(settingsInEffect);
-                debug("AdvertiseCallback onStartSuccess");
+
+    private void showBluetoothDiscoveryPopup() {
+
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_FINE_LOCATION_ACCESS);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, REQUEST_CODE_BLUETOOTH_SCAN);
+            } else {
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                PopupBluetoothDiscoveryBinding popupBinding = PopupBluetoothDiscoveryBinding.inflate(inflater);
+                layoutBluetoothDiscover = popupBinding.getRoot();
+
+                popupWindow = new PopupWindow(this);
+                popupWindow.setContentView(popupBinding.getRoot());
+
+                Button btnCancelDiscover = popupBinding.btnCancelDiscover;
+                btnCancelDiscover.setOnClickListener(view -> {
+                    popupWindow.dismiss();
+                    stopBluetoothDiscovery();
+                });
+
+                // Show the popup window
+                popupWindow.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+                startBluetoothDiscovery();
             }
-
-            @Override
-            public void onStartFailure(int errorCode) {
-                super.onStartFailure(errorCode);
-                debug("AdvertiseCallback onStartFailure");
-            }
-        };
-        BluetoothLeAdvertiser bluetoothLeAdvertiser = bluetoothAdapter.getBluetoothLeAdvertiser();
-        AdvertiseSettings advertiseSettings = new AdvertiseSettings.Builder()
-                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
-                .setConnectable(true)
-                .setTimeout(0)
-//                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
-                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
-                .build();
-
-
-//        byte[] mfData=hexStringToByteArray("0201");
-
-        AdvertiseData advertiseData = new AdvertiseData.Builder()
-//                .setIncludeTxPowerLevel(true)
-                .setIncludeDeviceName(true)
-//                .addServiceUuid(Constants.DIS_UUID)
-//                .addServiceUuid(Constants.HID_UUID)
-                .addServiceUuid(Constants.HOGP_UUID)
-//                .addServiceUuid(Constants.BAS_UUID)
-                .build();
-
-        AdvertiseData scanResult = new AdvertiseData.Builder()
-//                .setIncludeTxPowerLevel(true)
-                .setIncludeDeviceName(true)
-//                .addServiceUuid(Constants.DIS_UUID)
-//                .addServiceUuid(Constants.HID_UUID)
-//                .addServiceUuid(Constants.HOGP_UUID)
-//                .addServiceUuid(Constants.BAS_UUID)
-                .build();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADVERTISE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADVERTISE}, 1);
         }
-        bluetoothLeAdvertiser.startAdvertising(advertiseSettings, advertiseData, scanResult, advertiseCallback);
-//        bluetoothLeAdvertiser.startAdvertising(advertiseSettings, advertiseData, advertiseCallback);
     }
 
-    @SuppressLint("MissingPermission")
-    private void startBluetoothLEScan() {
-        bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
-
-        ScanCallback leScanCallback = new ScanCallback() {
-            @Override
-            public void onScanResult(int callbackType, ScanResult result) {
-                super.onScanResult(callbackType, result);
-//                if (result.getDevice().getAddress().equals("41:67:08:9E:29:6F")) {
-//
-//                    ScanCallback scanCallbackStopped = new ScanCallback() {
-//                        @Override
-//                        public void onScanResult(int callbackType, ScanResult result) {
-//                            super.onScanResult(callbackType, result);
-//                            debug("scanCallbackStopped onScanResult");
-//                        }
-//                    };
-//                    bluetoothLeScanner.stopScan(scanCallbackStopped);
-//                    result.getDevice().createBond();
-//                }
-                debug("onScanResult " + result.getDevice().getAddress() + " " + result.getDevice().getName());
-                ScanCallback scanCallbackStopped = new ScanCallback() {
-                    @Override
-                    public void onScanResult(int callbackType, ScanResult result) {
-                        super.onScanResult(callbackType, result);
-                        debug("scanCallbackStopped onScanResult");
-                    }
-                };
-                bluetoothLeScanner.stopScan(scanCallbackStopped);
-                result.getDevice().createBond();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_FINE_LOCATION_ACCESS -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showBluetoothDiscoveryPopup();
+                } else {
+                    Toast.makeText(MainActivity.this, "Fine location access not granted", Toast.LENGTH_LONG).show();
+                }
+            }
+            case REQUEST_CODE_BLUETOOTH_SCAN -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    showBluetoothDiscoveryPopup();
+                } else {
+                    Toast.makeText(MainActivity.this, "Bluetooth Scan not granted", Toast.LENGTH_LONG).show();
+                }
             }
 
-            @Override
-            public void onScanFailed(int errorCode) {
-                super.onScanFailed(errorCode);
-                debug("onScanFailed " + errorCode);
+            case REQUEST_CODE_POST_NOTIFICATION -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startService();
+                } else {
+                    isNotificationRefused = true;
+                    Toast.makeText(MainActivity.this, "No notification buttons will be displayed!", Toast.LENGTH_LONG).show();
+                    startService();
+                }
             }
-
-            @Override
-            public void onBatchScanResults(List<ScanResult> results) {
-                super.onBatchScanResults(results);
-                debug("onBatchScanResults " + results);
-            }
-        };
-
-        List<ScanFilter> scanFilters = new ArrayList<>();
-        ScanFilter scanFilter = new ScanFilter.Builder()
-//                .setDeviceName("DESKTOP-4NAPAOI")
-                .setDeviceAddress("41:67:08:9E:29:6F")
-//                .setServiceUuid(ParcelUuid.fromString("00001812-0000-1000-8000-00805F9B34FB"))
-                .build();
-        scanFilters.add(scanFilter);
-
-        ScanSettings scanSettings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build();
-
-//        bluetoothLeScanner.startScan(leScanCallback);
-//        bluetoothLeScanner.startScan(scanFilters, scanSettings, leScanCallback);
-        bluetoothLeScanner.startScan(null, scanSettings, leScanCallback);
-
+        }
     }
+
 
     @SuppressLint("MissingPermission")
     private void startBluetoothDiscovery() {
@@ -512,7 +471,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         debug("discoveryStarted=" + discoveryStarted);
     }
 
-    @SuppressLint("MissingPermission")
+    private boolean stopBluetoothDiscovery() {
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            return false;
+        }
+        return bluetoothAdapter.cancelDiscovery();
+    }
+
     private BroadcastReceiver getBroadcastReceiver() {
         return new BroadcastReceiver() {
             @Override
@@ -522,27 +489,64 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 String action = intent.getAction();
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    String deviceName = device.getName();
-                    String deviceHardwareAddress = device.getAddress(); // MAC address
-                    debug(deviceName + ", " + deviceHardwareAddress);
-
-                    if (deviceName.equals("DESKTOP-4NAPAOI")) {
-                        device.createBond();
-                    }
-                }
-                if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    int bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, -1);
-                    if (bondState == BluetoothDevice.BOND_BONDED) {
+//                    if (device != null && device.getName() != null && !device.getName().trim().isEmpty()) {
+                    if (device != null) {
                         String deviceName = device.getName();
                         String deviceHardwareAddress = device.getAddress(); // MAC address
-                        debug("Bonding completed with " + deviceName + ", " + deviceHardwareAddress);
-                        populateBondedDevices();
-//                        bluetoothAdapter.getProfileProxy(MainActivity.this, MainActivity.this, BluetoothProfile.HID_DEVICE);
+                        debug(deviceName + ", " + deviceHardwareAddress);
+                        createBluetoothDiscoveredItem(deviceName, device);
                     }
+
                 }
+//                if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
+//                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+//                    int bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, -1);
+//                    if (bondState == BluetoothDevice.BOND_BONDED && device != null) {
+//                        String deviceName = device.getName();
+//                        String deviceHardwareAddress = device.getAddress(); // MAC address
+//                        debug("Bonding completed with " + deviceName + ", " + deviceHardwareAddress);
+//                        //TODO: Connect device right away
+////                        debug("Starting Service with device " + deviceName);
+////                        populateBondedDevices();
+////                        cmbBondedDevices.setSelection(0);
+////                        startService(device);
+////                        bluetoothAdapter.getProfileProxy(MainActivity.this, MainActivity.this, BluetoothProfile.HID_DEVICE);
+//                    }
+//                }
             }
         };
+    }
+
+    private void createBluetoothDiscoveredItem(String deviceName, BluetoothDevice bluetoothDevice) {
+        final int padding = 40;
+        TextView textView = new TextView(this);
+        textView.setPadding(padding, padding, padding, padding);
+        textView.setText(String.format("%s: %s", deviceName, bluetoothDevice.getAddress()));
+//        textView.setOnClickListener(view -> this.pairDevice(bluetoothDevice));
+        textView.setOnClickListener(view -> {
+            popupWindow.dismiss();
+            stopBluetoothDiscovery();
+            startService(bluetoothDevice);
+        });
+        layoutBluetoothDiscover.addView(textView, 1);
+    }
+
+    private void pairDevice(BluetoothDevice device) {
+        debug("pairing device " + device);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            Toast.makeText(MainActivity.this, "Bluetooth connect permission not granted, please grant it.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (stopBluetoothDiscovery()) {
+            debug("bonding now...");
+            popupWindow.dismiss();
+            device.createBond();
+        } else {
+            debug("cannot stop discovery!");
+        }
+
     }
 
     @SuppressLint("MissingPermission")
@@ -558,115 +562,34 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             }
         };
-        getSelectedBluetoothDevice().connectGatt(this, false, bluetoothGattCallback);
-
+        if (getSelectedBluetoothDevice() != null) {
+            getSelectedBluetoothDevice().connectGatt(this, false, bluetoothGattCallback);
+        }
     }
-
-    @SuppressLint("MissingPermission")
-    private void openGattServer() {
-        BluetoothGattServerCallback gattServerCallback = new BluetoothGattServerCallback() {
-            @Override
-            public void onServiceAdded(int status, BluetoothGattService service) {
-                super.onServiceAdded(status, service);
-                debug("onServiceAdded");
-            }
-
-            @Override
-            public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
-                super.onConnectionStateChange(device, status, newState);
-                debug("onConnectionStateChange " + device.getName());
-            }
-        };
-
-        bluetoothManager.openGattServer(this, gattServerCallback);
-    }
-
-    @SuppressLint("MissingPermission")
-    private void companionPair() {
-        CompanionDeviceManager companionDeviceManager = getSystemService(CompanionDeviceManager.class);
-
-        BluetoothDeviceFilter bluetoothDeviceFilter = new BluetoothDeviceFilter.Builder()
-//                .setNamePattern(Pattern.compile("My device"))
-//                .addServiceUuid(new ParcelUuid(new UUID(0x123abcL, -1L)), null)
-//                .addServiceUuid(ParcelUuid.fromString("0000110a-0000-1000-8000-00805f9b34fb"), null)
-                .build();
-
-        AssociationRequest pairingRequest = new AssociationRequest.Builder()
-                .addDeviceFilter(bluetoothDeviceFilter)
-//                .setSingleDevice(true)
-                .build();
-
-        CompanionDeviceManager.Callback callback = new CompanionDeviceManager.Callback() {
-            @Override
-            public void onDeviceFound(IntentSender chooserLauncher) {
-                debug("onDeviceFound");
-                try {
-                    startIntentSenderForResult(chooserLauncher, REQUEST_CODE_BT_DEVICE_SELECTED, null, 0, 0, 0);
-                } catch (IntentSender.SendIntentException e) {
-                    debug("onDeviceFound SendIntentException");
-                }
-            }
-
-            @Override
-            public void onFailure(CharSequence error) {
-                debug("onFailure");
-            }
-        };
-        companionDeviceManager.associate(pairingRequest, callback, null);
-
-
-    }
-
-//    @SuppressLint("MissingPermission")
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        debug("onActivityResult requestCode" + requestCode + " resultCode=" + resultCode);
-//        if (requestCode == REQUEST_CODE_BT_DEVICE_SELECTED) {
-//            if (resultCode == Activity.RESULT_OK && data != null) {
-//                BluetoothDevice deviceToPair = data.getParcelableExtra(CompanionDeviceManager.EXTRA_DEVICE);
-//                if (deviceToPair != null) {
-//
-//                    IntentFilter intentFilter = new IntentFilter();
-//                    intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-//                    registerReceiver(getBroadcastReceiver(), intentFilter);
-//
-//                    debug("will now pair with " + deviceToPair.getName());
-//                    deviceToPair.createBond();
-//                }
-//            }
-//
-//        }
-//        if (requestCode == REQUEST_CODE_NOTIFICATION_TEST) {
-//            debug("NOTIFICATION!");
-//        }
-//    }
-
-//    static int x = 0;
-//    static int y = 0;
 
     @SuppressLint({"WrongConstant", "ClickableViewAccessibility"})
     private void assignButtonActions() {
-        Button btnPower = findViewById(R.id.btnPower);
-        Button btnMenu = findViewById(R.id.btnMenu);
 
-        Button btnPair = findViewById(R.id.btnPair);
+        Button btnPower = activityMainBinding.btnPower;
+        Button btnMenu = activityMainBinding.btnMenu;
 
-        btnPair.setOnClickListener(this::pairBtnAction);
+        Button btnDiscover = activityMainBinding.btnDiscover;
 
-        Button btnLeft = findViewById(R.id.btnLeft);
-        Button btnRight = findViewById(R.id.btnRight);
-        Button btnUp = findViewById(R.id.btnUp);
-        Button btnDown = findViewById(R.id.btnDown);
-        Button btnMiddle = findViewById(R.id.btnMiddle);
-        Button btnBack = findViewById(R.id.btnBack);
-        Button btnHome = findViewById(R.id.btnHome);
-        Button btnVolInc = findViewById(R.id.btnVolInc);
-        Button btnVolDec = findViewById(R.id.btnVolDec);
-        Button btnMute = findViewById(R.id.btnMute);
-        Button btnPlayPause = findViewById(R.id.btnPlayPause);
-        Button btnRewind = findViewById(R.id.btnRewind);
-        Button btnForward = findViewById(R.id.btnForward);
+        btnDiscover.setOnClickListener(this::btnDiscoverAction);
+
+        Button btnLeft = activityMainBinding.btnLeft;
+        Button btnRight = activityMainBinding.btnRight;
+        Button btnUp = activityMainBinding.btnUp;
+        Button btnDown = activityMainBinding.btnDown;
+        Button btnMiddle = activityMainBinding.btnMiddle;
+        Button btnBack = activityMainBinding.btnBack;
+        Button btnHome = activityMainBinding.btnHome;
+        Button btnVolInc = activityMainBinding.btnVolInc;
+        Button btnVolDec = activityMainBinding.btnVolDec;
+        Button btnMute = activityMainBinding.btnMute;
+        Button btnPlayPause = activityMainBinding.btnPlayPause;
+        Button btnRewind = activityMainBinding.btnRewind;
+        Button btnForward = activityMainBinding.btnForward;
 
         buttons = new ArrayList<>();
         buttons.add(btnLeft);
@@ -693,16 +616,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         btnCurLeft.setOnTouchListener((view, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 boolean sent = MouseHelper.sendData(true, false, false, 0, 0, 0);
-                if (sent)
-                    vibrate();
+                if (sent) vibrate();
             }
             return false;
         });
         btnCurRight.setOnTouchListener((view, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 boolean sent = MouseHelper.sendData(false, true, false, 0, 0, 0);
-                if (sent)
-                    vibrate();
+                if (sent) vibrate();
             }
             return false;
         });
@@ -770,8 +691,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            debug("onKey= BACKSPACE");
             boolean sent = KeyboardHelper.sendKeyDown(KeyboardHelper.Modifier.NONE, KeyboardHelper.Key.BACKSPACE);
             KeyboardHelper.sendKeyUp();
-            if (sent)
-                vibrate();
+            if (sent) vibrate();
             return true;
         }
         return false;
@@ -804,8 +724,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         KeyboardHelper.sendKeyUp();
                     }
                 }
-                if (sent)
-                    vibrate();
+                if (sent) vibrate();
             }
 
             @Override
@@ -823,16 +742,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            debug("onKey=" + txtInput.getText().toString());
             boolean sent = KeyboardHelper.sendKeyDown(KeyboardHelper.Modifier.NONE, KeyboardHelper.Key.ENTER);
             KeyboardHelper.sendKeyUp();
-            if (sent)
-                vibrate();
+            if (sent) vibrate();
             return true;
         }
         if (keyCode == KeyEvent.KEYCODE_DEL && keyEvent.getAction() == KeyEvent.ACTION_UP) {
 //            debug("onKey= BACKSPACE");
             boolean sent = KeyboardHelper.sendKeyDown(KeyboardHelper.Modifier.NONE, KeyboardHelper.Key.BACKSPACE);
             KeyboardHelper.sendKeyUp();
-            if (sent)
-                vibrate();
+            if (sent) vibrate();
             return true;
         }
         return false;
@@ -840,7 +757,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
     @SuppressLint("ClickableViewAccessibility")
-    private void addKeyBoardListeners(Button button, int... keys) {
+    private void addKeyboardListeners(Button button, int... keys) {
 
         int modifier;
         int key;
@@ -856,8 +773,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            debug("onTouch " + motionEvent.getAction());
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 boolean sent = KeyboardHelper.sendKeyDown(modifier, key);
-                if (sent)
-                    vibrate();
+                if (sent) vibrate();
             }
             if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 boolean sent = KeyboardHelper.sendKeyUp();
@@ -871,27 +787,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         button.setOnTouchListener((view, motionEvent) -> {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 boolean sent = RemoteControlHelper.sendKeyDown(keys[0], keys[1]);
-                if (sent)
-                    vibrate();
+                if (sent) vibrate();
             }
             if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 boolean sent = RemoteControlHelper.sendKeyUp();
-            }
-            return false;
-        });
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private void addRemoteKeysListeners(Button button, byte[] key1, byte[] key2) {
-        button.setOnTouchListener((view, motionEvent) -> {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                boolean sent = RemoteControlHelper.sendKeyDown(key1[0], key1[1]);
-                sent = RemoteControlHelper.sendKeyUp();
-
-                sent = RemoteControlHelper.sendKeyDown(key2[0], key2[1]);
-                sent = RemoteControlHelper.sendKeyUp();
-                if (sent)
-                    vibrate();
             }
             return false;
         });
@@ -909,38 +808,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         int len = s.length();
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i + 1), 16));
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
     }
 
-    private void testNotification() {
-
-        Intent intent = new Intent(this, NotificationBroadcastReceiver.class);
-        intent.setAction("Play/Pause");
-
-        PendingIntent pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-
-        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_buttons);
-        remoteViews.setOnClickPendingIntent(R.id.btnPower, pi);
-
-        String CHANNEL_ID = "Bluetooth Remote Service";
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Bluetooth Remote Service", NotificationManager.IMPORTANCE_MIN);
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_IMMUTABLE);
-        Notification notification =
-                new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setContentTitle("Bluetooth Remote")
-                        .setContentText("Test")
-                        .setSmallIcon(R.drawable.remote_control)
-                        .setContentIntent(pendingIntent)
-                        .setOngoing(true)
-//                        .setCustomContentView(new RemoteViews(getPackageName(), R.layout.test))
-                        .setCustomBigContentView(remoteViews)
-                        .build();
-
-        getSystemService(NotificationManager.class).notify(1, notification);
-    }
 
 }

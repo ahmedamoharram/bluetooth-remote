@@ -1,11 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item
+        android:id="@+id/item_discover"
+        android:title="@string/btn_discover"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/item_connect"
         android:title=""
-        app:actionLayout="@layout/switch_item"
+        app:actionLayout="@layout/options_menu"
         app:showAsAction="always" />
 
     <!-- Settings, should always be in the overflow -->

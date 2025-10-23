@@ -36,6 +36,7 @@
             android:launchMode="singleInstance"
             android:roundIcon="@mipmap/remote_control_launcher"
             android:showOnLockScreen="true"
+            android:screenOrientation="sensorPortrait"
             android:showWhenLocked="true"
             android:resizeableActivity="true"
             android:theme="@style/Theme.BluetoothRemote">
